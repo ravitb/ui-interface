@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/> -->
+    <script src="js/libs/less-1.4.1.min.js"></script>
+    
+    <link type="text/css" rel="stylesheet" href="style/normalize.css"/>
+    <link type="text/css" rel="stylesheet" href="style/main.css"/>
+    <!-- <link rel="stylesheet/less" type="text/css" href="style/main.less" /> -->
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
+  </head>
+  <body>
+    <header>
+      <nav class="navigation">
+        <ul>
+          <li>New</li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </nav>
+    </header>
+    <section class="main-content"></section>
+    <section class="canvas"><div></div></section>
+    <nav class="toolkit"></nav>
+    <footer></footer>
+    <script>
+      if (!window.jQuery) {
+          document.write('<script src="js/libs/jquery-2.0.3.min.js"><\/script>');
+          //http://damien.antipa.at/2012/08/20/how-to-detect-dom-manipulations-with-jquery/
+      }
+    </script>
+    <script src="js/libs/handlebars.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/facade.js"></script>
+    <script src="js/modules.js"></script>
+    <script type="text/javascript">
+      function createLogger(name) {
+        return function(_, a, b) {
+          // Skip the first argument (event object) but log the name and other args.
+          console.log(name, a, b);
+        };
+      }
+
+    </script> 
+  </body>
+</html>
