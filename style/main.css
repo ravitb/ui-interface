@@ -1,35 +1,158 @@
       body {
         font-size: 62.5%; 
-        background-color: #606060;
+        background-color: rgba(0,0,0,0.8);
+      }
+      #header {
       }
       .navigation {
         height: 2rem;
-        background-color: #343434;
         color: #fff;
+        background-color: #000;  
+        border-bottom: 1px solid rgba(256,256,256,0.2);
       }
       .navigation ul {
+        list-style-type: none;
+        display: inline;
         margin: 0;
         padding: 0;
-        list-style-type: none;
         text-align: left;
       }
-      .navigation li {
+      .navigation .dropdown {
+        position: relative;
+        display:inline-block;
         line-height: 2rem;
-        display: inline;
-        padding: 0.6rem 0 0.6rem 1rem;
+        cursor: pointer;
+        padding-left: 1rem;        
+      }
+      .navigation .dropdown ul {
+        display: none;
+        position: absolute;
+        top: 32px;
+        left: 0;
+        /*margin-left: 1rem;*/
+      }
+      .navigation .dropdown:hover ul{
+        display: inline-block;
+      }
+      .navigation .dropdown li {
+        background-color: rgba(26,206,206, 0.8);        
+        padding: 0 1rem;
+      }
+      .navigation .dropdown li:hover {
+        background-color: rgba(26,206,206, 1);
+      }
+
+      .init-canvas {
+        position: absolute;
+        top: 14rem;
+        left: 40%;
+        width: 14rem;
+        height: 13rem;
+        border: 1px solid #000;
+        background-color: rgba(0,0,0, 0.7);
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        opacity: 0;
+      }
+      .init-canvas header {
+        line-height: 2rem;
+        /*margin-bottom: 1rem;*/
+        padding-left: 1rem;
+        font-size: 0.8rem;
+        color: #fff;
+        background-color: rgba(0,0,0, 0.4);
+      }
+      .init-canvas header .close {
+        position: absolute;
+        top: 0;
+        right: 0.5rem;
+        font-size: 1rem;
+        overflow: hidden;
         cursor: pointer;
       }
+      .init-canvas header .close:before {
+        content: "×";
+        
+      }
+      .init-canvas form {
+        margin: 0.4rem 1.9rem;
+      }
+      .init-canvas input {
+        margin-top: 0.9rem;
+        width: 10rem;
+        height: 1.2rem;
+      }
+      .init-canvas input[type="submit"],
+      .init-canvas input[type="button"] {
+        width: 3.5rem;
+        height: 2rem;
+        margin-top: 1.5rem;
+        /*padding: 0;*/
+        /*outline: 0;*/
+        border: 0;
+        white-space: nowrap;
+        word-wrap: normal;
+        color: #fff;
+        background-color: #000;
+      }
+      .init-canvas input[type="submit"] {
+        margin-left: 0.3rem;
+      }
+      .init-canvas input[type="submit"]:hover,
+      .init-canvas input[type="button"]:hover {
+        background-color: rgb(26,206,206);
+      }
+      .init-canvas .width,
+      .init-canvas .height {
+        width: 4.2rem;
+        height: 1.8rem;
+      }
+
+      .init-canvas label {
+        display: inline-block;
+        position: relative;
+        width: 1.3rem;
+        height: 1rem;
+      }
+      .init-canvas label:before {
+        content: "×";
+
+        position: absolute;
+        top: 0;
+        left: 0.2rem;
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .init-canvas ::-webkit-input-placeholder {
+         padding-left: 0.2rem;
+      }
+
+      .init-canvas :-moz-placeholder { /* Firefox 18- */
+         padding-left: 0.2rem;
+      }
+
+      .init-canvas ::-moz-placeholder {  /* Firefox 19+ */
+         padding-left: 0.2rem;
+      }
+
+      .init-canvas :-ms-input-placeholder {  
+         padding-left: 0.2rem;
+      }
+
       .canvas {
         margin-right: 12rem;
       }
-      .canvas > div{
+      .canvas > div {
         width: 28rem;
         min-height: 35rem;
         margin: 4rem auto 0;
         background-color: #fff;
-        -webkit-box-shadow: 0 0 5px #343434;
-           -moz-box-shadow: 0 0 5px #343434;
-                box-shadow: 0 0 5px #343434;
+        border-radius: 3px;
+        /*-webkit-box-shadow: inset 0 0 5px #343434;
+           -moz-box-shadow: inset 0 0 5px #343434;
+                box-shadow: inset 0 0 5px #343434;*/
       }
       .toolkit {
         position: fixed;

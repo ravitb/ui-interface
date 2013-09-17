@@ -1,147 +1,203 @@
+//Microsoft Virtual WiFi Miniport Adapter (Device Manager -> View -> Show hidden devices); init_value = enabled.
 var CORE = (function (){
 	var moduleData = {},
-		to_string = function (obj) { return Object.prototype.toString.call(obj);},
-		debug = true;
+		to_string = function (obj) { return Object.prototype.toString.call(obj);};
+		// debug = true;
 
 		return {
-			debug : function(on) {
-				debug = on ? true : false;
-			},
-			create_module : function (moduleID, creator) {
-            var temp;
-            if (typeof moduleID === 'string' && typeof creator === 'function') {
-                temp = creator(Facade.create(this, moduleID));
-                if (temp.init && typeof temp.init === 'function' && temp.destroy && typeof temp.destroy === 'function') {
-                    temp = null;
-                    moduleData[moduleID] = {
-                        create : creator,
-                        instance : null
-                    };
+            create_module : function (moduleID, creator) {
+                var temp;
+                if (typeof moduleID === 'string' && typeof creator === 'function') {
+                    temp = creator(Facade.create(this, moduleID));
+                    if (temp.init && typeof temp.init === 'function' && temp.destroy && typeof temp.destroy === 'function') {
+                        temp = null;
+                        moduleData[moduleID] = {
+                            create : creator,
+                            instance : null
+                        };
+                    } else {
+                        console.log(1, moduleID, temp.destroy, "Module ", moduleID, "Registration : FAILED. instance has no init or destory functions");
+                    }
                 } else {
-                    this.log(1, "Module '" + moduleID + "' Registration : FAILED : instance has no init or destory functions");
+                    console.log(1, "Module '",  moduleID, "' Registration : FAILED. one or more arguments are of incorrect type");    
                 }
-            } else {
-                this.log(1, "Module '" + moduleID + "' Registration : FAILED : one or more arguments are of incorrect type");
-            }
-        },
-        start : function (moduleID) {
-            var mod = moduleData[moduleID];
-            if (mod) {
-                mod.instance = mod.create(Facade.create(this, moduleID));
-                mod.instance.init();
-            }
-        },
-        start_all : function () {
-            var moduleID;
-            for (moduleID in moduleData) {
-                if (moduleData.hasOwnProperty(moduleID)) {
-                    this.start(moduleID);
+            },
+            start : function (moduleID) {
+                var mod = moduleData[moduleID];
+                if (mod) {
+                    mod.instance = mod.create(Facade.create(this, moduleID));
+                    mod.instance.init();
                 }
-            }
-        },
-        stop : function (moduleID) {
-            var data;
-            if (data = moduleData[moduleId] && data.instance) {
-                data.instance.destroy();
-                data.instance = null;
-            } else {
-                this.log(1, "Stop Module '" + moduleID + "': FAILED : module does not exist or has not been started");
-            }
-        },
-        stop_all : function () {
-            var moduleID;
-            for (moduleID in moduleData) {
-                if (moduleData.hasOwnProperty(moduleID)) {
-                    this.stop(moduleID);
-                }
-            }
-        },
-        register_events : function (evts, mod) {
-            if (this.is_obj(evts) && mod) {
-                if (moduleData[mod]) {
-                    moduleData[mod].events = evts;
-                } else {
-                    this.log(1, "");
-                }
-            } else {
-                this.log(1, "");
-            }
-        },
-        trigger_event : function (evt) {
-            var mod;
-            for (mod in moduleData) {
-                if (moduleData.hasOwnProperty(mod)){
-                    mod = moduleData[mod];
-                    if (mod.events && mod.events[evt.type]) {
-                        mod.events[evt.type](evt.data);
+            },
+            start_all : function () {
+                var moduleID;
+                for (moduleID in moduleData) {
+                    if (moduleData.hasOwnProperty(moduleID)) {
+                        this.start(moduleID);
                     }
                 }
-            }
-        },
-        remove_events : function (evts, mod) {
-            if (this.is_obj(evts) && mod && (mod = moduleData[mod]) && mod.events) {
-                delete mod.events;
-            } 
-        },
-        log : function (severity, message) {
-            if (debug) {
-                console[ (severity === 1) ? 'log' : (severity === 2) ? 'warn' : 'error'](message);
-            } else {
-                // send to the server
-            }     
-        },
-        dom : {
-            query : function (selector, context) {
-                var ret = {}, that = this, jqEls, i = 0;
+            },
+            stop : function (moduleID) {
+                var data;
+                if (data = moduleData[moduleID] && data.instance) {
+                    data.instance.destroy();
+                    data.instance = null;
+                } else {
+                    console.log(1, "Stop Module '", moduleID, "': FAILED : module does not exist or has not been started");    
+                }
+            },
+            stop_all : function () {
+                var moduleID;
+                for (moduleID in moduleData) {
+                    if (moduleData.hasOwnProperty(moduleID)) {
+                        this.stop(moduleID);
+                    }
+                }
+            },
+            register_events : function (evts, module) {
+                if (this.is_obj(evts) && module) {
+                    if (moduleData[module]) {
+                        moduleData[module].events = evts;
+                    } else {
+                        console.log(1, "");
+                    }
+                } else {
+                    console.log(1, "");
+                }
+            },
+            trigger_event : function (evt) {
+                var module;
+                for (module in moduleData) {
+                    if (moduleData.hasOwnProperty(module)){
+                        module = moduleData[module];
+                        if (module.events && module.events[evt.type]) {
+                            module.events[evt.type](evt.data);
+                        }
+                    }
+                }
+            },
+            remove_events : function (evts, module) {
+                if (this.is_obj(evts) && module && (module = moduleData[module]) && module.events) {
+                    delete module.events;
+                }
+            },
+            external : {
+                query : function (selector, context) {
+                    var resault = {},
+                        that = this,
+                        jqElement, 
+                        i = 0;
+                    if (context && context.find) {
+                        jqElement = context.find(selector);
+                    } else {
+                        jqElement = jQuery(selector);
+                    }
 
-                if (context && context.find) {
-                    jqEls = context.find(selector);
-                } else {
-                    jqEls = jQuery(selector);
-                }
-                
-                ret = jqEls.get();
-                ret.length = jqEls.length;
-                ret.query = function (sel) {
-                    return that.query(sel, jqEls);
-                }
-                return ret;
-            },
-            bind : function (element, evt, fn) {
-                if (element && evt) {
-                    if (typeof evt === 'function') {
-                        fn = evt;
-                        evt = 'click';
+                    resault = jqElement.get();
+                    resault.length = jqElement.length;
+                    resault.query = function (sel) {
+                        return that.query(sel, jqElement);
                     }
-                    jQuery(element).bind(evt, fn);
-                } else {
-                    // log wrong arguments
-                }
-            },
-            unbind : function (element, evt, fn) {
-                if (element && evt) {
-                    if (typeof evt === 'function') {
-                        fn = evt;
-                        evt = 'click';
+                    return resault;
+                },
+                bind : function (element, evt, fn) {
+                    if (element && evt) {
+                        if (typeof evt === 'function') {
+                            fn = evt;
+                            evt = 'click';
+                        }
+                        jQuery(element).bind(evt, fn);
+                    } else {
+                        console.log(2, "Dom Bind FAILED : one of the params is missing");    
                     }
-                    jQuery(element).unbind(evt, fn);
-                } else {
-                    // log wrong arguments
+                },
+                unbind : function (element, evt, fn) {
+                    if (element && evt) {
+                        if (typeof evt === 'function') {
+                            fn = evt;
+                            evt = 'click';
+                        }
+                        jQuery(element).unbind(evt, fn);
+                    } else {
+                        console.log(2, "Dom Unbind FAILED : one of the params is missing");   
+                    }
+                },
+                extend_args : function () {  //Covert args to obj
+                    var obj = arguments[0] || {},
+                        args = [].slice.apply(arguments);
+                    console.log('recursia', args);
+                    if (args.length <= 2) {
+                        obj = jQuery.extend(obj, args[1]);
+                        console.log('length <= 2',obj);
+                        return obj;
+                    }
+
+                    for (var i = 1, l = args.length; i < l; i++) {
+                        console.log('args ', args[i]);
+                        this.extend_args(obj, args[i]);
+                        // jQuery.extend(obj, arguments[i]);
+                        // console.log('obj',obj, arguments[i]);
+                    }
+                    // return obj;
+                },
+                extend : function () {
+                    return jQuery.extend(arguments);
+                },
+                create : function (element) {
+                    // return jQuery(el);
+                    return document.createElement(element);
+                },
+                apply_attrs : function (element, attrs) {
+                    return jQuery(element).attr(attrs);
+                },
+                animate : function (element, options, fn) {
+                    if (element && options) {
+                        if (typeof options === 'function') {
+                            options = {};
+                            fn = options;
+                        }
+                        return jQuery(element).animate(options, fn);
+                    }
+                },
+                parent : function (element) {
+                    return jQuery(element).parent();
+                },
+                show : function (element) {
+                    return jQuery(element).show();
+                },
+                hide : function (element) {
+                    return jQuery(element).hide();
+                },
+                html : function (element) {
+                    return jQuery(element).html(); 
+                },
+                text : function(element) {
+                    return jQuery(element).text();
+                },
+                each : function (collection, fn) {
+                    return jQuery.each(collection, fn);
+                },
+                draggable : function () {
+                    console.log('draggable', arguments);
+                    // if (jQuery().drags) {
+                    //     return jQuery(element).drags(options);
+                    // }
                 }
             },
-            create: function (el) {
-                return document.createElement(el);        
+            is_arr : function (arr) {
+                return jQuery.isArray(arr);  
             },
-            apply_attrs: function (el, attrs) {
-                jQuery(el).attr(attrs);             
+            is_obj : function (obj) {
+                return jQuery.isPlainObject(obj);
+            },
+            shift_args : function () {
+                return Array.prototype.shift.call(arguments);
+            },
+            slice : function (args, from, to) { //return an array
+                return Array.prototype.slice.apply(arguments, from, to);//***
+            },
+            slice_args : function (args, from, to) { //return object
+
             }
-        },
-        is_arr : function (arr) {
-            return jQuery.isArray(arr);         
-        },
-        is_obj : function (obj) {
-            return jQuery.isPlainObject(obj);         
         }
-		}
-
-})();
+})();   
