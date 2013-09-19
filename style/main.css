@@ -43,6 +43,7 @@
       }
 
       .init-canvas {
+        display: none;
         position: absolute;
         top: 14rem;
         left: 40%;

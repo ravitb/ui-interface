@@ -3,37 +3,52 @@ CORE.create_module('header', function (facade) {
     
     var menu_item,
         init_canvas,
-        canvas_header;
+        hide_canvas;
     return {
         init : function () {
             var that = this;
 
             init_canvas = facade.find('.init-canvas');
-            // facade.hide(init_canvas);
-            
-            this._new(); //To remove
+            hide_canvas = facade.find('.init-canvas .close');
+            facade.add_event(hide_canvas, 'click', this.canvas.remove);
 
             menu_item = facade.find('.menu li');
             facade.each(menu_item, function(index, value){
-                facade.add_event(value, 'click', that['_' + facade.text(value).toLowerCase()]);
+                facade.add_event(value, 'click', function() {
+                    that['_' + facade.text(value).toLowerCase()]();
+                });
             });
         }, 
         destroy : function () {
-           facade.each(menu_item, function(index, value){
-                facade.remove_event(value, 'click', that['_' + facade.text(value).toLowerCase()]);
+           facade.each(menu_item, function(key, value){
+                facade.remove_event(value, 'click', function() {
+                    that['_' + facade.text(value).toLowerCase()]
+                });
             }); 
         },
         _new : function () {
-            console.log('NEW!!!');
-            canvas_header = facade.find('.init-canvas header');
-            console.log('init-canvas', facade.html(canvas_header));
-            facade.draggable(init_canvas, {'cursor': 'default'})
-            facade.animate(1, 'aaa',2);
-            // facade.show(init_canvas);
+            this.canvas.create();
         },
-        _reset : function () {
-            var input = facade.find('input');
-            console.log('reset', input);
+        canvas : {
+            display_interval : 100,
+            create : function () {
+                canvas_header = facade.find('.init-canvas header');
+                
+                facade.draggable(init_canvas, {cursor: 'default'}).show(init_canvas);
+                facade.animate(init_canvas, {opacity: '1'}, this.display_interval);
+            },
+            remove : function () {
+                facade.animate(init_canvas, {opacity: '0'}, this.display_interval, function() {
+                    facade.hide(init_canvas)
+                });
+            },
+            reset : function () {            
+                console.log('reset');
+            },
+            submit : function (e) {
+                e.preventDefault();
+                console.log('submit');
+            }
         }
     };
 });

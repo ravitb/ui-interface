@@ -7,10 +7,10 @@ var Facade = {
 				return CONTAINER.query(selector);
 			},
 			add_event : function (element, type, fn) {
-				core.external.bind(element, type, fn);
+				return core.external.bind(element, type, fn);
 			},
 			remove_event : function (element, type, fn) {
-				core.external.unbind(element, type, fn);
+				return core.external.unbind(element, type, fn);
 			},
 			notify : function (evt) {
 				if (core.is_obj(evt) && evt.type) {
@@ -28,10 +28,7 @@ var Facade = {
 				}
 			},
 			animate : function () {
-				console.log('animate', arguments)
-				var obj = {},
-					new_obj = core.external.extend_args(obj,{c:3,d:4}, {m:5});
-				console.log('test', new_obj);
+				return core.external.animate(arguments);
 			},
 			parent : function (element) {
 				return core.external.parent(element);
@@ -49,16 +46,11 @@ var Facade = {
 				return core.external.text(element);
 			},
 			each : function (collection, fn) {
-				core.external.each(collection, fn);
+				return core.external.each(collection, fn);
 			},
-			draggable : function () {
-				var obj  = core.external.extend({}, arguments);
-				console.log('facade draggable', obj);
-				return core.external.draggable(obj); //Is this leagal???
+			draggable : function (element, options) {
+				return core.external.draggable(element, options); //Is the return value ok?
 			},
-			// css : function () {
-
-			// },
 			create_element : function (element, config) {
                 var i, child, text;
                 el = core.external.create(element);

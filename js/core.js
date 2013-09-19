@@ -86,11 +86,14 @@ var CORE = (function (){
                     var resault = {},
                         that = this,
                         jqElement, 
-                        i = 0;
+                        i = 0,
+                        test;
                     if (context && context.find) {
                         jqElement = context.find(selector);
+                        test = true;
                     } else {
                         jqElement = jQuery(selector);
+                        test = false;
                     }
 
                     resault = jqElement.get();
@@ -122,26 +125,20 @@ var CORE = (function (){
                         console.log(2, "Dom Unbind FAILED : one of the params is missing");   
                     }
                 },
-                extend_args : function () {  //Covert args to obj
-                    var obj = arguments[0] || {},
-                        args = [].slice.apply(arguments);
-                    console.log('recursia', args);
-                    if (args.length <= 2) {
-                        obj = jQuery.extend(obj, args[1]);
-                        console.log('length <= 2',obj);
-                        return obj;
-                    }
+                extend_obj : function (init_obj, args) {  //Covert args to obj
+                    var obj = init_obj || {};
 
-                    for (var i = 1, l = args.length; i < l; i++) {
-                        console.log('args ', args[i]);
-                        this.extend_args(obj, args[i]);
-                        // jQuery.extend(obj, arguments[i]);
-                        // console.log('obj',obj, arguments[i]);
+                    for (var i = 0, l = args.length; i < l; i++) {
+                        // if (typeof args[i] !== 'object') {
+                        //     args['' + i] = args[i];
+                        // }
+                        obj = jQuery.extend(obj, args[i]);
                     }
-                    // return obj;
+                    return obj;
                 },
                 extend : function () {
-                    return jQuery.extend(arguments);
+                    jQuery.extend(arguments);
+                    return arguments;
                 },
                 create : function (element) {
                     // return jQuery(el);
@@ -150,14 +147,9 @@ var CORE = (function (){
                 apply_attrs : function (element, attrs) {
                     return jQuery(element).attr(attrs);
                 },
-                animate : function (element, options, fn) {
-                    if (element && options) {
-                        if (typeof options === 'function') {
-                            options = {};
-                            fn = options;
-                        }
-                        return jQuery(element).animate(options, fn);
-                    }
+                animate : function (element, properties, duration, easing, fn) {
+                    var args = arguments[0];
+                    return jQuery(args[0]).animate(args[1], args[2], args[3], args[4]);
                 },
                 parent : function (element) {
                     return jQuery(element).parent();
@@ -177,11 +169,20 @@ var CORE = (function (){
                 each : function (collection, fn) {
                     return jQuery.each(collection, fn);
                 },
-                draggable : function () {
-                    console.log('draggable', arguments);
-                    // if (jQuery().drags) {
-                    //     return jQuery(element).drags(options);
-                    // }
+                draggable : function (element, options) {
+                    if (!jQuery().drags) {
+                        return jQuery(element).drags(options);
+                    } else {
+                        return jQuery(element);
+                    }
+                },
+                shift_args : function () {
+                    Array.prototype.shift.call(arguments);
+                    return arguments;
+                },
+                slice_args : function (args, from, to) { //return an array
+                    Array.prototype.slice.apply(arguments, from, to);//***
+                    return arguments;
                 }
             },
             is_arr : function (arr) {
