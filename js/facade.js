@@ -42,8 +42,12 @@ var Facade = {
 			html : function (element) {
 				return core.external.html(element);
 			},
-			text : function (element) {
-				return core.external.text(element);
+			text : function (element, data) {
+				return core.external.text(element, data);
+			},
+			val : function (element, data) {
+				console.log('val', element, data, '*');
+				return core.external.val(element, data);
 			},
 			each : function (collection, fn) {
 				return core.external.each(collection, fn);

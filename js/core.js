@@ -1,5 +1,5 @@
 //Microsoft Virtual WiFi Miniport Adapter (Device Manager -> View -> Show hidden devices); init_value = enabled.
-var CORE = (function (){
+var CORE = (function ($){
 	var moduleData = {},
 		to_string = function (obj) { return Object.prototype.toString.call(obj);};
 		// debug = true;
@@ -92,7 +92,7 @@ var CORE = (function (){
                         jqElement = context.find(selector);
                         test = true;
                     } else {
-                        jqElement = jQuery(selector);
+                        jqElement = $(selector);
                         test = false;
                     }
 
@@ -109,7 +109,7 @@ var CORE = (function (){
                             fn = evt;
                             evt = 'click';
                         }
-                        jQuery(element).bind(evt, fn);
+                        $(element).bind(evt, fn);
                     } else {
                         console.log(2, "Dom Bind FAILED : one of the params is missing");    
                     }
@@ -120,7 +120,7 @@ var CORE = (function (){
                             fn = evt;
                             evt = 'click';
                         }
-                        jQuery(element).unbind(evt, fn);
+                        $(element).unbind(evt, fn);
                     } else {
                         console.log(2, "Dom Unbind FAILED : one of the params is missing");   
                     }
@@ -132,48 +132,51 @@ var CORE = (function (){
                         // if (typeof args[i] !== 'object') {
                         //     args['' + i] = args[i];
                         // }
-                        obj = jQuery.extend(obj, args[i]);
+                        obj = $.extend(obj, args[i]);
                     }
                     return obj;
                 },
                 extend : function () {
-                    jQuery.extend(arguments);
+                    $.extend(arguments);
                     return arguments;
                 },
                 create : function (element) {
-                    // return jQuery(el);
+                    // return $(el);
                     return document.createElement(element);
                 },
                 apply_attrs : function (element, attrs) {
-                    return jQuery(element).attr(attrs);
+                    return $(element).attr(attrs);
                 },
                 animate : function (element, properties, duration, easing, fn) {
                     var args = arguments[0];
-                    return jQuery(args[0]).animate(args[1], args[2], args[3], args[4]);
+                    return $(args[0]).animate(args[1], args[2], args[3], args[4]);
                 },
                 parent : function (element) {
-                    return jQuery(element).parent();
+                    return $(element).parent();
                 },
                 show : function (element) {
-                    return jQuery(element).show();
+                    return $(element).show();
                 },
                 hide : function (element) {
-                    return jQuery(element).hide();
+                    return $(element).hide();
                 },
                 html : function (element) {
-                    return jQuery(element).html(); 
+                    return $(element).html(); 
                 },
-                text : function(element) {
-                    return jQuery(element).text();
+                text : function(element, data) {
+                    return $(element).text(data);
+                },
+                val : function(element, data) {
+                    return $(element).val(data);
                 },
                 each : function (collection, fn) {
-                    return jQuery.each(collection, fn);
+                    return $.each(collection, fn);
                 },
                 draggable : function (element, options) {
-                    if (!jQuery().drags) {
-                        return jQuery(element).drags(options);
+                    if (!!$().drags) {
+                        return $(element).drags(options);
                     } else {
-                        return jQuery(element);
+                        return $(element);
                     }
                 },
                 shift_args : function () {
@@ -186,10 +189,10 @@ var CORE = (function (){
                 }
             },
             is_arr : function (arr) {
-                return jQuery.isArray(arr);  
+                return $.isArray(arr);  
             },
             is_obj : function (obj) {
-                return jQuery.isPlainObject(obj);
+                return $.isPlainObject(obj);
             },
             shift_args : function () {
                 return Array.prototype.shift.call(arguments);
@@ -201,4 +204,4 @@ var CORE = (function (){
 
             }
         }
-})();   
+})(jQuery);   

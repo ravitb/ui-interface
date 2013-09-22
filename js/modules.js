@@ -1,53 +1,119 @@
 
 CORE.create_module('header', function (facade) {
     
-    var menu_item,
-        init_canvas,
-        hide_canvas;
     return {
+        top_menu : undefined,
         init : function () {
             var that = this;
 
-            init_canvas = facade.find('.init-canvas');
-            hide_canvas = facade.find('.init-canvas .close');
-            facade.add_event(hide_canvas, 'click', this.canvas.remove);
-
-            menu_item = facade.find('.menu li');
-            facade.each(menu_item, function(index, value){
+            this.canvas.init();
+            this.canvas.create();
+            this.top_menu = facade.find('.menu li');
+            facade.each(this.top_menu, function(index, value){
                 facade.add_event(value, 'click', function() {
-                    that['_' + facade.text(value).toLowerCase()]();
+                    switch (facade.text(value).toLowerCase()) {
+                        case 'new' : 
+                            that.canvas.create();
+                            break;
+                        default : console.log('Unable to complete the selected action');
+                    }
                 });
             });
         }, 
         destroy : function () {
-           facade.each(menu_item, function(key, value){
+            this.canvas.destroy();
+            facade.each(top_menu, function(key, value){
                 facade.remove_event(value, 'click', function() {
-                    that['_' + facade.text(value).toLowerCase()]
+                    switch (facade.text(value).toLowerCase()) {
+                        case 'new' : 
+                            that.canvas.create();
+                            break;
+                        default : console.log('Unable to complete the selected action');
+                    }
                 });
-            }); 
-        },
-        _new : function () {
-            this.canvas.create();
+            });
         },
         canvas : {
-            display_interval : 100,
-            create : function () {
-                canvas_header = facade.find('.init-canvas header');
-                
-                facade.draggable(init_canvas, {cursor: 'default'}).show(init_canvas);
-                facade.animate(init_canvas, {opacity: '1'}, this.display_interval);
+            interval : 100,
+            hide : facade.find('.init-canvas .close'),
+            dialog : facade.find('.init-canvas'),
+            header : facade.find('.init-canvas header'),
+            drag : facade.find('.init-canvas header'),
+            dragged : facade.find('.init-canvas .wrapper'),
+            input : facade.find('.init-canvas input'),
+            init : function () {
+                var that = this;
+                facade.add_event(this.hide, 'click', function() {
+                    that.canvas.remove(that.dialog);
+                });
+
+                facade.each(this.input, function(index, value){
+                    switch (value.name) {
+                        case 'reset' : 
+                            facade.add_event(value, 'click', function() {
+                                that.reset();
+                            });
+                            break;
+                        case 'submit' :
+                            facade.add_event(value, 'click', function(e) {
+                                e.preventDefault();
+                                that.submit();
+                            });
+                            break;
+                        default :   console.log('Unable to complete the selected action');
+                                    console.log('input', index, value.name);
+                    }
+                });
             },
-            remove : function () {
-                facade.animate(init_canvas, {opacity: '0'}, this.display_interval, function() {
-                    facade.hide(init_canvas)
+            destroy : function () {
+                var that = this;
+                facade.remove_event(this.hide, 'click', function() {
+                    that.remove(that.dialog);
+                });
+                
+                facade.each(this.canvas.input, function(index, value){
+                    switch (value.name) {
+                        case 'reset' : 
+                            facade.remove_event(value, 'click', function() {
+                                that.reset();
+                            });
+                            break;
+                        case 'submit' :
+                            facade.remove_event(value, 'click', function(e) {
+                                e.preventDefault();
+                                that.submit();
+                            });
+                            break;
+                        default :   console.log('Unable to complete the selected action');
+                                    console.log('input', index, value.name);
+                    }
+                });
+            },
+            create : function () {
+                facade.draggable(this.drag, {dragged : this.dragged});
+                facade.show(this.dialog);
+                facade.animate(this.dialog, {opacity: '1'}, this.interval);
+            },
+            remove : function (target) {
+                facade.animate(target, {opacity: '0'}, this.interval, function() {
+                    facade.hide(target);
                 });
             },
             reset : function () {            
-                console.log('reset');
+                facade.val(this.input.slice(0,3), '');
             },
-            submit : function (e) {
-                e.preventDefault();
-                console.log('submit');
+            submit : function () {    
+                var res = {
+                    width : this.input[0].value,
+                    height : this.input[1].value,
+                    hex : this.input[2].value
+                }
+
+                facade.notify({
+                     type : 'create_canvas',
+                     data :res
+                 });
+                console.log('submit', this.input.slice(0,3), res);
             }
         }
     };
