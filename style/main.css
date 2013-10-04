@@ -48,6 +48,8 @@
         top: 40%;
         left: 40%;
         opacity: 0;
+        overflow: hidden;
+        z-index: 1000;
       }
       .init-canvas .wrapper{
         position: relative;
@@ -147,9 +149,12 @@
       }
 
       .canvas-frame {
-        float: left;
+        position: absolute;
+        top: 3rem;
+        left: 3rem;
         border:   rgba(0,0,0,0.4) solid 0.5rem;
         background-color: #1d1d1d;
+        z-index: 100;
       }
 
       .canvas-frame .content {

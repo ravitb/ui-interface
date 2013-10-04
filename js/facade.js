@@ -51,6 +51,9 @@ var Facade = {
 			closest : function (element, selector, context) {
 				return core.dom.closest(element, selector, context);
 			},
+			add_class : function (element, str) {
+				return core.dom.add_class(element, str);
+			},
 			css : function (element, options) {
 				return core.dom.css(element, options);
 			},

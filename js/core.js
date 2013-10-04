@@ -176,6 +176,9 @@ var CORE = (function ($, hb){
                 closest : function (element, selector, context) {
                     return $(element).closest(selector, context);
                 },
+                add_class : function (element, str) {
+                    $(element).addClass(str);
+                },
                 css : function (element, options) {
                     return $(element).css(options);
                 },

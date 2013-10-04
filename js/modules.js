@@ -102,7 +102,7 @@ CORE.create_module('header', function (facade) {
             reset : function () {            
                 facade.val(this.input.slice(0,3), '');
             },
-            submit : function () {    
+            submit : function () {  
                 var res = {
                 css : {
                     'width' : this.input[1].value,
@@ -143,7 +143,7 @@ CORE.create_module('canvas-container', function(facade) {
                 this.data.splice(id, 1);
             }
         },
-        interval : 100,
+        interval : 200,
         init : function () {
             console.log('init', this);
             var that = this,
@@ -156,8 +156,7 @@ CORE.create_module('canvas-container', function(facade) {
                     facade.add_event(delete_btn, 'click', function(e) {
                         that.remove_sheet(e);
                     });
-                },
-                'create_canvas2' : this.create_leaf
+                }
             });
         },
         destroy : function () {
@@ -173,18 +172,20 @@ CORE.create_module('canvas-container', function(facade) {
                 element   = facade.create_element('div'),
                 sheet;
 
-            element = facade.prepend(element, template);
+            element = facade.append(element, template);
             facade.data(element, 'sheet-id', this.sheets.set_id());
+            facade.add_class(element, 'canvas-frame');
+            facade.css(element, {'top' : (this.sheets.counter + 3) + 'rem', 'left' : (this.sheets.counter + 3) + 'rem'})
             facade.prepend(container, element);
             this.sheets.data.push(element);
-
+            
             sheet = facade.find('.content', element);
-            facade.css(sheet, opt.css); //how can I concatinate functions?
+            facade.css(sheet, opt.css); //how can I concatinate functions? with prototype and call?
             return element;
         },
         remove_sheet : function (element) {
             var that = this,
-                sheet = facade.parent(facade.closest(element.target, '.canvas-frame'));
+                sheet = facade.closest(element.target, '.canvas-frame');
 
             facade.animate(sheet, {opacity: '0'}, this.interval, function() {
                 facade.remove(sheet);  //renove from view
