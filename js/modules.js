@@ -175,7 +175,9 @@ CORE.create_module('canvas-container', function(facade) {
             element = facade.append(element, template);
             facade.data(element, 'sheet-id', this.sheets.set_id());
             facade.add_class(element, 'canvas-frame');
-            facade.css(element, {'top' : (this.sheets.counter + 3) + 'rem', 'left' : (this.sheets.counter + 3) + 'rem'})
+            facade.css(element, {'top' : (this.sheets.counter + 3) + 'rem',
+                                 'left' : (this.sheets.counter + 3) + 'rem',
+                                 'z-index' : Math.min(this.sheets.counter + 100, 999)})
             facade.prepend(container, element);
             this.sheets.data.push(element);
             

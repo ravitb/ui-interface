@@ -37,7 +37,7 @@
                     left:e.pageX + pos_x - drg_w
                 }).on("mouseup", function() {
                     $(this).removeClass('draggable').css('z-index', z_idx);
-                    $dragged.removeClass('dragged').css('z-index', z_idx);
+                    $dragged.removeClass('dragged');
                 });
             });
             e.preventDefault(); // disable selection
