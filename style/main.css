@@ -52,11 +52,11 @@
       .init-canvas .wrapper{
         position: relative;
         width: 14rem;
-        height: 13rem;
-        background-color: rgba(0,0,0, 0.9);
+        height: 14.5rem;
+        background-color: rgba(120, 120, 120, 0.9);
         border: 1px solid #000;
       }
-      .init-canvas header {
+      header.box {
         line-height: 2rem;
         /*margin-bottom: 1rem;*/
         padding-left: 1rem;
@@ -65,21 +65,19 @@
         background-color: rgba(0,0,0, 0.4);
         /*cursor: move;*/
       }
-      .init-canvas header .close {
-        position: absolute;
-        top: 0;
-        right: 0;
+      header.box .close {
+        float: right;
         overflow: hidden;
         padding: 0 0.8rem;
         font-size: 1rem;
         cursor: pointer;
       }
-      .init-canvas header .close:before {
+      header.box .close:before {
         content: "×";
         
       }
       .init-canvas form {
-        margin: 0.4rem 1.9rem;
+        margin: 0.4rem 1.7rem;
       }
       .init-canvas input {
         margin-top: 0.9rem;
@@ -88,6 +86,7 @@
         -webkit-border-radius: 2px;
         -moz-border-radius: 2px;
         border-radius: 2px;
+        padding-left: 0.2rem;
       }
       .init-canvas input[type="submit"],
       .init-canvas input[type="button"] {
@@ -112,7 +111,7 @@
       .init-canvas .width,
       .init-canvas .height {
         width: 4.2rem;
-        height: 1.8rem;
+        height: 1.6rem;
       }
 
       .init-canvas label {
@@ -132,25 +131,32 @@
         font-weight: 700;
       }
       .init-canvas ::-webkit-input-placeholder {
-         padding-left: 0.2rem;
+         
       }
 
-      .init-canvas :-moz-placeholder { /* Firefox 18- */
-         padding-left: 0.2rem;
+      .init-canvas :-moz-placeholder { 
+         
       }
 
-      .init-canvas ::-moz-placeholder {  /* Firefox 19+ */
-         padding-left: 0.2rem;
+      .init-canvas ::-moz-placeholder {
+        
       }
 
       .init-canvas :-ms-input-placeholder {  
-         padding-left: 0.2rem;
+        
       }
 
-      .canvas {
-        margin-right: 12rem;
+      .canvas-frame {
+        float: left;
+        border:   rgba(0,0,0,0.4) solid 0.5rem;
+        background-color: #1d1d1d;
       }
-      .canvas > div {
+
+      .canvas-frame .content {
+        margin: 1rem;
+      }
+  
+      .canvas {
         width: 28rem;
         min-height: 35rem;
         margin: 4rem auto 0;

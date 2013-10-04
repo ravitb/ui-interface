@@ -1,5 +1,5 @@
 //Microsoft Virtual WiFi Miniport Adapter (Device Manager -> View -> Show hidden devices); init_value = enabled.
-var CORE = (function ($){
+var CORE = (function ($, hb){
 	var moduleData = {},
 		to_string = function (obj) { return Object.prototype.toString.call(obj);};
 		// debug = true;
@@ -59,10 +59,10 @@ var CORE = (function ($){
                     if (moduleData[module]) {
                         moduleData[module].events = evts;
                     } else {
-                        console.log(1, "");
+                        console.log(1, "Event Registration'", moduleID, "': FAILED : module not founs");
                     }
                 } else {
-                    console.log(1, "");
+                    console.log(1, "Event Registration'", moduleID, "': FAILED");
                 }
             },
             trigger_event : function (evt) {
@@ -81,7 +81,7 @@ var CORE = (function ($){
                     delete module.events;
                 }
             },
-            external : {
+            dom : {
                 query : function (selector, context) {
                     var resault = {},
                         that = this,
@@ -95,7 +95,9 @@ var CORE = (function ($){
                         jqElement = $(selector);
                         test = false;
                     }
-
+                    if (selector === '.close') {
+                        console.log('close:', context, jqElement);
+                    }
                     resault = jqElement.get();
                     resault.length = jqElement.length;
                     resault.query = function (sel) {
@@ -147,12 +149,35 @@ var CORE = (function ($){
                 apply_attrs : function (element, attrs) {
                     return $(element).attr(attrs);
                 },
+                append : function (element, content) {
+                    return $(element).append(content);
+                },
+                prepend : function (element, content) {
+                    return $(element).prepend(content);
+                },
+                remove : function (element, selector) {
+                    return $(element).remove(selector);
+                },
+                data : function (element, key, value) {
+                    var test = $(element).data(key, value);
+                    if (!value) {
+                        return $(element).data(key);
+                    } else {
+                        return $(element).data(key, value);
+                    }
+                },
                 animate : function (element, properties, duration, easing, fn) {
                     var args = arguments[0];
                     return $(args[0]).animate(args[1], args[2], args[3], args[4]);
                 },
                 parent : function (element) {
                     return $(element).parent();
+                },
+                closest : function (element, selector, context) {
+                    return $(element).closest(selector, context);
+                },
+                css : function (element, options) {
+                    return $(element).css(options);
                 },
                 show : function (element) {
                     return $(element).show();
@@ -188,6 +213,28 @@ var CORE = (function ($){
                     return arguments;
                 }
             },
+            template : {
+                get : function (name, data) {
+                    var source = $(name).html(),
+                        template = hb.compile(source);
+
+
+                    return template(data);
+                }
+
+                // get : function (name) {
+                    // if (hb.templates === 'undefined' || hb.templates[name] === 'undefined') {
+                    //     $.ajax({
+                    //         url : 'js/templates/' + name + '.handlebars',
+                    //         dataType : 'jsonp',
+                    //         success : function (data) {
+                    //             console.log('jsonp', data);
+                    //         },
+                    //         async : false
+                    //     });
+                    // }
+                // }
+            },
             is_arr : function (arr) {
                 return $.isArray(arr);  
             },
@@ -204,4 +251,4 @@ var CORE = (function ($){
 
             }
         }
-})(jQuery);   
+})(jQuery, Handlebars);
