@@ -11,7 +11,7 @@ CORE.create_module('header', function (facade) {
             this.top_menu = facade.find('.menu li');
             facade.each(this.top_menu, function(index, value){
                 facade.add_event(value, 'click', function() {
-                    switch (facade.html(value).toLowerCase()) {
+                    switch (facade.text(value).toLowerCase()) {
                         case 'new' : 
                             that.canvas.create();
                             break;
@@ -41,11 +41,10 @@ CORE.create_module('header', function (facade) {
             drag : facade.find('.init-canvas header'),
             dragged : facade.find('.init-canvas .wrapper'),
             input : facade.find('.init-canvas input'),
-
             init : function () {
                 var that = this;
                 facade.add_event(this.hide, 'click', function() {
-                    that.remove(that.dialog);
+                    that.canvas.remove(that.dialog);
                 });
 
                 facade.each(this.input, function(index, value){
@@ -62,6 +61,7 @@ CORE.create_module('header', function (facade) {
                             });
                             break;
                         default :   console.log('Unable to complete the selected action');
+                                    console.log('input', index, value.name);
                     }
                 });
             },
@@ -104,95 +104,92 @@ CORE.create_module('header', function (facade) {
             },
             submit : function () {    
                 var res = {
-                css : {
-                    'width' : this.input[1].value,
-                    'height' : this.input[2].value,
-                    'background-color' : this.input[3].value
-                },
-                name : this.input[0].value  
-                } 
+                    width : this.input[0].value,
+                    height : this.input[1].value,
+                    hex : this.input[2].value
+                }
 
                 facade.notify({
                      type : 'create_canvas',
                      data :res
                  });
-                this.remove(this.dialog);
+                console.log('submit', this.input.slice(0,3), res);
             }
         }
     };
 });
 
-CORE.create_module('canvas-container', function(facade) {
 
-    return {
-        sheets : {
-            data : [],
-            counter : 0,
-            set_id : function () {
-                return this.counter++;
-            },
-            get_id : function (id) {
-                for (var i = 0, l = this.data.length; i < l; i++) {
-                   if (id === facade.data(this.data[i], 'sheet-id')) {
-                        return i;
-                   }
-                }
-            },
-            remove : function (sheet) {
-                var id = this.get_id(facade.data(sheet, 'sheet-id'));
-                this.data.splice(id, 1);
-            }
-        },
-        interval : 100,
-        init : function () {
-            console.log('init', this);
-            var that = this,
-                delete_btn,
-                sheet;
-            facade.listen({
-                'create_canvas' : function (opt) {
-                    sheet = that.create(opt);
-                    delete_btn = facade.find('header .close', sheet);
-                    facade.add_event(delete_btn, 'click', function(e) {
-                        that.remove_sheet(e);
-                    });
-                },
-                'create_canvas2' : this.create_leaf
-            });
-        },
-        destroy : function () {
-            var delete_btn;
-            for (i = 0, l = sheets.data.length; i < l; i++) {
-                delete_btn = facade.find('header .close', sheet[i]);
-                facade.remove_event(delete_btn, 'click', this.remove_sheet(sheet));
-            }
-        },
-        create : function (opt) {
-            var container = facade.find(),
-                template  = facade.get_template('#some-template', {'title' : opt.name}),
-                element   = facade.create_element('div'),
-                sheet;
+// CORE.create_module('init-canvas', function (facade) {
+//     var hide_btn;
+//     return {
+//         init : function () {
 
-            element = facade.prepend(element, template);
-            facade.data(element, 'sheet-id', this.sheets.set_id());
-            facade.prepend(container, element);
-            this.sheets.data.push(element);
+//             submit_btn = facade.find('.submit')[0];
+//         	hide_btn = facade.find('.hide')[0];
 
-            sheet = facade.find('.content', element);
-            facade.css(sheet, opt.css); //how can I concatinate functions?
-            return element;
-        },
-        remove_sheet : function (element) {
-            var that = this,
-                sheet = facade.parent(facade.closest(element.target, '.canvas-frame'));
+//             // facade.
+//         	facade.add_event(submit_btn, 'click', this.submit);
+//             facade.add_event(hide_btn, 'click', this.hide);
+        
+//         	facade.listen({
+//         		'init-canvas' : this.show
+//         	})
+//         }, 
+//         destroy : function () {
+// 	    	Facade.remove_event(hide_element, 'click', this.hide_dialog);
+//             Facade.ignore(['init-canvas'])
+//         },
+//         submit : function () {
+//             console.log('');
+//         },
+//         show : function (e) {
+//             console.log('show', this);
+//         	facade.show(facade.find('#init-canvas'));
+//         },
+//         hide : function(){
+//         	facade.find('init-canvas').hide();
+//         }
 
-            facade.animate(sheet, {opacity: '0'}, this.interval, function() {
-                facade.remove(sheet);  //renove from view
-                that.sheets.remove(sheet); //remove from model
-            });
-        }
-    }
-});
+//     };
+// });
 
+// CORE.create_module('canvas', function (facade) {
+// 	var canvas_wrapper;
+
+//     return {
+//         init : function () {
+//         	canvas_wrapper = facade.find('section.main-content')[0];
+//         	facade.listen({
+//         		'create' : this.create
+//         	});
+//         }, 
+//         destroy : function () {
+//             // facade.destroy_element('section.canvas');
+//             Facade.ignore(['create']);
+//         },
+//         //open: function(){},
+//         create : function(options){
+//         	var canvas;
+//         	this.options = Facade.extend({
+//         		'width': '600px',
+//         		'min-height': '800px',
+//         		'background-color': '#fff'
+//         	}, options);
+//         	canvas = facade.create_element('section', {'class' : 'canvas', children : [
+//         		Facade.create_element('div', {'options' : this.options})
+//         	]});
+//         	canvas_wrapper.append_child(canvas);
+//         },
+//         save: function(e) {
+//         	facade.notify({
+//         		type : 'save-canvas'
+//         	});
+//         },
+//         reset: function(){
+//         	facade.reset_element('section.canvas');
+//         }
+//     };
+// });
 
 CORE.start_all();

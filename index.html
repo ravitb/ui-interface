@@ -39,27 +39,25 @@
       </nav>
       <section class="init-canvas">
         <div class="wrapper">
-          <header class="box">
+          <header>
             Create Canvas
             <span class="close"></span>
           </header>
           <form>
-            <input type="text" name="name" class="name" placeholder="Title" value="title" tabindex="1" />
-            <input type="text" name="width" class="width" placeholder="Width" value="600" /><label for="height"></label><input type="text" name="height" class="height" placeholder="Height" value="900" />
-            <div><input type="text" name="color" class="color" placeholder="HEX Number" value="#fff" /></div>
+            <input type="text" name="width" class="width" placeholder="Width" tabindex="1" /><label for="height"></label><input type="text" name="height" class="height" placeholder="Height" tabindex="2" />
+            <div><input type="text" name="color" class="color" placeholder="HEX Number" /></div>
             <!-- <input type="color" name="favcolor" /> -->
             <input type="button" class="reset" name="reset" value="Reset" />
-            <input type="button" class="submit" name="submit" value="Submit" />
+            <input type="submit" class="submit" name="submit" value="Submit" />
           </form>
           
         </div>
       </section>
     </header>
     
-    <section id="main-content">
-      <section id="canvas-container"></section>
-      <!-- <nav class="toolkit"></nav> -->
-    </section>
+    <section class="main-content"></section>
+    <section class="canvas"><div></div></section>
+    <nav class="toolkit"></nav>
     <footer></footer>
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
     <script>
@@ -69,15 +67,6 @@
       }
     </script>
     <script src="js/libs/handlebars.js"></script>
-    <script id="some-template" type="text/x-handlebars-template">
-      <div class="canvas-frame">
-        <header class="box">
-          {{title}}
-          <span class="close"></span>
-        </header>
-        <div class="content"></div>
-      </div>
-    </script>
     <script src="js/tiny-draggable.js"></script>
     <script src="js/core.js"></script>
     <script src="js/facade.js"></script>
