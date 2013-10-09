@@ -29,6 +29,7 @@
         position: absolute;
         top: 32px;
         left: 0;
+        z-index: 1000;
         /*margin-left: 1rem;*/
       }
       .navigation .dropdown:hover ul{
@@ -48,7 +49,6 @@
         top: 40%;
         left: 40%;
         opacity: 0;
-        overflow: hidden;
         z-index: 1000;
       }
       .init-canvas .wrapper{
@@ -159,6 +159,10 @@
 
       .canvas-frame .content {
         margin: 1rem;
+      }
+
+      .canvas-frame header {
+        background-color: pink;
       }
   
       .canvas {

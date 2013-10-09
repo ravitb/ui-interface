@@ -75,8 +75,8 @@ var Facade = {
 			each : function (collection, fn) {
 				return core.dom.each(collection, fn);
 			},
-			draggable : function (element, options) {
-				return core.dom.draggable(element, options); //Is the return value ok?
+			draggable : function (element, options, fn) {
+				return core.dom.draggable(element, options, fn); //Is the return value ok?
 			},
 			create_element : function (element, config) {
                 var i, child, text;

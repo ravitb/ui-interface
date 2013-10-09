@@ -200,9 +200,9 @@ var CORE = (function ($, hb){
                 each : function (collection, fn) {
                     return $.each(collection, fn);
                 },
-                draggable : function (element, options) {
+                draggable : function (element, options, fn) {
                     if (!!$().drags) {
-                        return $(element).drags(options);
+                        return $(element).drags(options, fn);
                     } else {
                         return $(element);
                     }
