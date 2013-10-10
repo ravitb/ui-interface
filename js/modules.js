@@ -131,6 +131,9 @@ CORE.create_module('canvas-container', function(facade) {
             set_counter : function () {
                 return this.counter++;
             },
+            shift_layer : function () {
+                console.log('shift_layer', this.data.shift());
+            },
             push_layer : function (sheet) {
                 var layer = this.set_counter();
                 this.data.push({'element' : sheet, 'layer' : layer});
@@ -142,22 +145,36 @@ CORE.create_module('canvas-container', function(facade) {
             },
             layer_up : function (sheet) {
                 var layer = facade.data(sheet, 'sheet-layer');
-                console.log('pushup_layer', typeof layer === 'number');
                 if (typeof layer === 'number') {
                     for (var i = 0, l = this.data.length, j; i < l; i++) {
                         if (this.data[i].layer > layer) {
                             this.data[i].layer--;
                         } else if (this.data[i].layer === layer) {
                             j = i;
-                            console.log('item found', i);
                         }
                     }
-                    var test = this.data.splice(j, 1);
-                    console.log('sliced', j, test);
-                    console.log('element did not remove', this.data);
-                    this.counter--;
+                    this.cut(j);
                 }
-                this.push_layer(sheet);
+                // this.push_layer(sheet);
+                // console.log('layer_up', this.data);
+            },
+            cut : function (pos) {
+                // return this.data.splice(pos, 1);
+                var item,
+                    popped;
+                console.log('cut', pos);
+                for (var i = 0, l = this.data.length; i < l; i++) {
+                    if (this.data[i].layer !== pos) {
+                        item = this.data.shift();
+                        this.(item);
+                        console.log('pop', item, this.data);
+                    } else {
+                        popped = this.data.pop();
+                        console.log('popped', popped, this.data);
+                        this.counter--;
+                    }
+                }
+                return popped;
             },
             remove : function (sheet) {
                 var top = this.layer_up(sheet);
@@ -226,7 +243,7 @@ CORE.create_module('canvas-container', function(facade) {
             //     facade.css(this.sheets.data[i].element, {'z-index' : this.z_index + this.sheets.data[i].layer});
             //     console.log('sheet', facade.css(this.sheets.data[i].element, 'z-index'));
             // }
-            console.log('sheet', this.sheets.data);
+            // console.log('sheet', this.sheets.data);
         },
         activate_canvas : function () {
 
