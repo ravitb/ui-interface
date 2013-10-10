@@ -128,33 +128,44 @@ CORE.create_module('canvas-container', function(facade) {
         sheets : {
             data : [],
             counter : 0,
-            set_layer : function () {
+            set_counter : function () {
                 return this.counter++;
             },
-            get_layer : function (layer) {
-                for (var i = 0, l = this.data.length; i < l; i++) {
-                   if (layer === facade.data(this.data[i].element, 'sheet-layer')) {
-                        return i;
-                   }
-                }
+            push_layer : function (sheet) {
+                var layer = this.set_counter();
+                this.data.push({'element' : sheet, 'layer' : layer});
+                return layer;
             },
-            move_to_top : function () {
-
+            pop_layer : function () {
+                this.data.pop();
+                this.counter--;
+            },
+            layer_up : function (sheet) {
+                var layer = facade.data(sheet, 'sheet-layer');
+                console.log('pushup_layer', typeof layer === 'number');
+                if (typeof layer === 'number') {
+                    for (var i = 0, l = this.data.length, j; i < l; i++) {
+                        if (this.data[i].layer > layer) {
+                            this.data[i].layer--;
+                        } else if (this.data[i].layer === layer) {
+                            j = i;
+                            console.log('item found', i);
+                        }
+                    }
+                    var test = this.data.splice(j, 1);
+                    console.log('sliced', j, test);
+                    console.log('element did not remove', this.data);
+                    this.counter--;
+                }
+                this.push_layer(sheet);
             },
             remove : function (sheet) {
-                var layer = this.get_layer(facade.data(sheet, 'sheet-layer'));
-                for (var i = 0, l = this.data.length, j; i < l; i++) {
-                    if (this.data[i].layer > layer) {
-                        this.data[i].layer--;
-                    } else if (this.data[i].layer === layer) {
-                        j = i;
-                    }
-                }
-                this.counter--;
-                this.data.splice(j, 1);
+                var top = this.layer_up(sheet);
+                this.pop_layer();
             }
         },
         interval : 200,
+        z_index : 100,
         init : function () {
             console.log('init', this);
             var that = this,
@@ -180,42 +191,42 @@ CORE.create_module('canvas-container', function(facade) {
         canvas : function (opt) {
             var that = this,
                 container = facade.find(),
-                item = this.create(opt),
+                element = this.create(opt),
+                layer = this.sheets.counter,
                 sheet,
                 header;
 
-            facade.prepend(container, item.element);
-            this.sheets.data.push({'element' : item.element, 'layer' : item.layer});
-            
-            header = facade.find('header', item.element);
-            facade.draggable(header, {dragged : '.canvas-frame', z_index: 900 + item.layer}, function() {
-                that.reorder_canvas(item.element);
-                that.activate_canvas(item.element);
+            facade.prepend(container, element);
+        
+            header = facade.find('header', element);
+            facade.draggable(header, {dragged : '.canvas-frame', z_index: facade.css(element, 'z-index')}, function() {
+                that.reorder_canvas(element);
+                that.activate_canvas(element);
             });
             
-            sheet = facade.find('.content', item.element);
+            sheet = facade.find('.content', element);
             facade.css(sheet, opt.css); //how can I concatinate functions? with prototype and call?
-            return item;
+            return element;
         },
         create : function (opt) {
             var template =  facade.get_template('#some-template', {'title' : opt.name}),
                 element  = facade.append(facade.create_element('div', {'class' : 'canvas-frame'}), template),
-                layer = this.sheets.set_layer();
+                layer = this.sheets.push_layer(element);
 
             facade.data(element, 'sheet-layer', layer);
             facade.css(element, {'top' : (this.sheets.counter*2 + 4) + 'rem',
                                  'left' : (this.sheets.counter*2 + 4) + 'rem',
-                                 'z-index' : Math.min(layer + 100, 999)});
-            return {'element' : element, 'layer' : layer};
+                                 'z-index' : Math.min(layer + this.z_index, 999)});
+            return element;
 
         },
         reorder_canvas : function (element) {
-            // console.log('reorder_canvas', facade.data(element, 'sheet-layer'), this.sheets.counter);
-            for (var i = 0, l = this.sheets.data.length; i < l; i++) {
-                // console.log('sheet', i, this.sheets.data[i].element);
-            }
-
-
+            this.sheets.layer_up(element);
+            // for (var i = 0, l = this.sheets.data.length; i < l; i++) {
+            //     facade.css(this.sheets.data[i].element, {'z-index' : this.z_index + this.sheets.data[i].layer});
+            //     console.log('sheet', facade.css(this.sheets.data[i].element, 'z-index'));
+            // }
+            console.log('sheet', this.sheets.data);
         },
         activate_canvas : function () {
 
@@ -225,8 +236,8 @@ CORE.create_module('canvas-container', function(facade) {
                 sheet = facade.closest(element.target, '.canvas-frame');
 
             facade.animate(sheet, {opacity: '0'}, this.interval, function() {
-                facade.remove(sheet);  //renove from view
                 that.sheets.remove(sheet); //remove from model
+                facade.remove(sheet);  //renove from view
             });
         }
     }
