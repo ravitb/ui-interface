@@ -85,7 +85,6 @@ CORE.create_module('header', function (facade) {
                             });
                             break;
                         default :   console.log('Unable to complete the selected action');
-                                    console.log('input', index, value.name);
                     }
                 });
             },
@@ -171,16 +170,13 @@ CORE.create_module('canvas-container', function(facade) {
             layer_up : function (sheet) {
                 var layer = facade.data(sheet, 'layer'),
                     that = this;
-                console.log('before', layer,  this.get_title(sheet));
+        
                 if (layer < this.data.length - 1) {
                     if (typeof layer === 'number') {
                         this.cut_layer(layer);
                     } 
                     this.push_layer(sheet);
                 }
-                this.iterate(function (sheet, layer) {
-                    console.log('each', layer,  that.get_title(sheet));
-                });
             },
             get_title : function (sheet) { //For debug purposes
                 var html = facade.html(sheet),
@@ -247,7 +243,6 @@ CORE.create_module('canvas-container', function(facade) {
             facade.prepend(container, element);
 
             sheet = facade.find('.content', element);
-            // console.log('create', facade.html(element), sheet);
             facade.css(sheet, opt.css);
             return element;
 
@@ -257,8 +252,7 @@ CORE.create_module('canvas-container', function(facade) {
             var that = this;
             this.sheets.iterate(function(sheet, layer) {
                 facade.css(sheet, {'z-index' : that.z_index + layer});
-            })
-            // console.log('sheet', this.sheets.data);
+            });
         },
         activate_canvas : function () {
 
