@@ -164,6 +164,10 @@
       .canvas-frame header {
         background-color: pink;
       }
+
+      .canvas-frame.active header {
+        background-color: #DB8CFF;
+      }
   
       .canvas {
         width: 28rem;

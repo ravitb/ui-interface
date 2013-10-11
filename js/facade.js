@@ -54,6 +54,9 @@ var Facade = {
 			add_class : function (element, str) {
 				return core.dom.add_class(element, str);
 			},
+			remove_class : function (element, str) {
+				return core.dom.remove_class(element, str);
+			},
 			css : function (element, options) {
 				return core.dom.css(element, options);
 			},

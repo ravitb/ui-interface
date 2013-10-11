@@ -179,6 +179,9 @@ var CORE = (function ($, hb){
                 add_class : function (element, str) {
                     $(element).addClass(str);
                 },
+                remove_class : function (element, str) {
+                    $(element).removeClass(str);
+                },
                 css : function (element, options) {
                     return $(element).css(options);
                 },

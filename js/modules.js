@@ -126,23 +126,17 @@ CORE.create_module('canvas-container', function(facade) {
     return {
         sheets : {
             data : [],
-            counter : 0,
-            unshift_layer : function (sheet) {
-                console.log('unshift_layer', this.data.unshift(sheet));
-            },
-            shift_layer : function () {
-                console.log('shift_layer', this.data.shift());
-            },
             push_layer : function (sheet) {
                 var id = this.data.length;
                 this.data.push(sheet);
                 facade.data(sheet, {'layer' : id});
-                // console.log('push_layer', sheet, facade.data(sheet, 'layer'));
+                this.layer_activation();
                 return id;
             },
             pop_layer : function () {
-                this.data.pop();
+                var sheet = this.data.pop();
                 facade.data(sheet, {'layer' : 'undefined'});
+                this.layer_activation();
             },
             cut_layer : function (pos) {
                 // return this.data.splice(pos, 1);  
@@ -151,11 +145,21 @@ CORE.create_module('canvas-container', function(facade) {
                     if (layer !== pos) {
                         facade.data(sheet, {'layer' : new_arr.length})
                         new_arr.push(sheet);
-                        // console.log('cut', facade.data(sheet,  'layer'));
                     } 
                 });  
                 delete this.data;
                 this.data = new_arr;
+                this.layer_activation();
+            },
+            layer_activation : function () {
+                var that = this;
+                this.iterate( function(sheet, layer) {
+                    if (layer === that.data.length - 1) {
+                        facade.add_class(sheet, 'active');
+                    } else {
+                        facade.remove_class(sheet, 'active');
+                    }
+                });
             },
             indexing : function () {
                 this.iterate( function (sheet, layer) {
@@ -177,6 +181,7 @@ CORE.create_module('canvas-container', function(facade) {
                     } 
                     this.push_layer(sheet);
                 }
+                this.layer_activation();
             },
             get_title : function (sheet) { //For debug purposes
                 var html = facade.html(sheet),
@@ -187,6 +192,7 @@ CORE.create_module('canvas-container', function(facade) {
             remove : function (sheet) {
                 var top = this.layer_up(sheet);
                 this.pop_layer();
+                this.layer_activation();
             }
         },
         interval : 200,
@@ -222,9 +228,7 @@ CORE.create_module('canvas-container', function(facade) {
             header = facade.find('header', element);
             facade.draggable(header, {dragged : '.canvas-frame', z_index: facade.css(element, 'z-index')}, function(drag) {
                 var sheet = facade.closest(drag, '.canvas-frame');
-                console.log('reorder canvas', facade.html(sheet), facade.data(sheet));
                 that.reorder_canvas(sheet);
-                that.activate_canvas(sheet);
             });
             
             return element;
@@ -254,9 +258,6 @@ CORE.create_module('canvas-container', function(facade) {
                 facade.css(sheet, {'z-index' : that.z_index + layer});
             });
         },
-        activate_canvas : function () {
-
-        },
         remove_sheet : function (element) {
             var that = this,
                 sheet = facade.closest(element.target, '.canvas-frame');
@@ -264,6 +265,7 @@ CORE.create_module('canvas-container', function(facade) {
             facade.animate(sheet, {opacity: '0'}, this.interval, function() {
                 that.sheets.remove(sheet); //remove from model
                 facade.remove(sheet);  //renove from view
+                console.log('remove', that.sheets.data);
             });
         }
     }
