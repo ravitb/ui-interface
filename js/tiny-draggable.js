@@ -30,6 +30,9 @@
                         z_index = z_idx;
                     } 
                     $(this).removeClass('draggable').closest(opt.dragged).css('z-index', z_index);
+                    if (typeof fn === 'function') {
+                        fn(this);
+                    }
                 });
             });
             e.preventDefault(); // disable selection
@@ -40,7 +43,7 @@
                 $(this).removeClass('active-handle').parent().removeClass('draggable');
             }
             if (typeof fn === 'function') {  
-                fn.call(this);
+                fn(this);
             }
         }); 
     }
