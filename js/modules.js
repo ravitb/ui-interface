@@ -232,10 +232,10 @@ CORE.create_module('canvas-container', function(facade) {
                     helper : 'clone',
                     parent : '#canvas-container'
                 },
-                function(drag, clone, id) {
+                function(drag, clone) {
                     var sheet = facade.closest(drag, '.canvas-frame');
                     that.reorder_canvas(sheet);
-                    console.log('dragged', id);
+                    console.log(1);
                     if (clone !== '') {
                         that.add_new(clone, {
                                 parent : '#canvas-container',

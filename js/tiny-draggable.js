@@ -26,19 +26,20 @@
                     top:e.pageY + pos_y - drg_h,
                     left:e.pageX + pos_x - drg_w
                 });
-            }).on("mouseup", function() {
+            })
+            $drag.on("mouseup", function() {
                 if (!z_index) {
                     z_index = z_idx;
                 } 
                 $drag.removeClass('draggable').closest(opt.dragged).css('z-index', z_index);
                 if (typeof fn === 'function') {
-                    fn(this, $clone, 1);
+                    fn(this, $clone);
                 }
             });
         }).on("mouseup", function() {
             $this.removeClass('draggable');
             if (typeof fn === 'function') {  
-                fn(this, $clone, 2);
+                fn(this, $clone);
             }
         }); 
     }
