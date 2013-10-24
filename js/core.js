@@ -210,6 +210,16 @@ var CORE = (function ($, hb){
                         return $(element);
                     }
                 },
+                // clone_element : function (element, parent) {
+                //     var $parent, 
+                //         $new_element;
+                //     if (!parent) {
+                //         $parent = $('body');
+                //     } else {
+                //         $parent = $(parent);
+                //     }
+                //     return $new_element = $(element).clone().appendTo($parent);
+                // }
                 shift_args : function () {
                     Array.prototype.shift.call(arguments);
                     return arguments;

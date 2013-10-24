@@ -226,9 +226,24 @@ CORE.create_module('canvas-container', function(facade) {
                 header;
         
             header = facade.find('header', element);
-            facade.draggable(header, {dragged : '.canvas-frame', z_index: facade.css(element, 'z-index')}, function(drag) {
-                var sheet = facade.closest(drag, '.canvas-frame');
-                that.reorder_canvas(sheet);
+            facade.draggable(header, { 
+                    dragged : '.canvas-frame',
+                    z_index: facade.css(element, 'z-index'),
+                    helper : 'clone',
+                    parent : '#canvas-container'
+                },
+                function(drag, clone, id) {
+                    var sheet = facade.closest(drag, '.canvas-frame');
+                    that.reorder_canvas(sheet);
+                    console.log('dragged', id);
+                    if (clone !== '') {
+                        that.add_new(clone, {
+                                parent : '#canvas-container',
+                                css : {
+                                    'opacity' : 1
+                                }
+                        });
+                    }
             });
             
             return element;
@@ -267,9 +282,22 @@ CORE.create_module('canvas-container', function(facade) {
                 facade.remove(sheet);  //renove from view
                 console.log('remove', that.sheets.data);
             });
+        },
+        add_new : function (element, opt) {
+            opt = $.extend({}, opt);
+
+            // console.log('add_new', element, opt);
+            facade.draggable(element);
+            if (opt.css !== '') {
+                facade.css(element, opt.css);
+            }
+            element.appendTo($(opt.parent));
+
         }
     }
 });
+
+
 
 
 CORE.start_all();

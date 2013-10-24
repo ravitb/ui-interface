@@ -1,22 +1,20 @@
 (function($) {
     $.fn.drags = function(opt, fn) {
-        var z_index = opt.z_index;
-        opt = $.extend({handle:"",cursor:"move", z_index:1000}, opt);
+        var $this = $(this),
+            $clone;
+        
+        opt = $.extend({handle:"",cursor:"move", z_index:1000, parent:$('body')}, opt);
 
-
-        if(opt.handle === "") {
-            var $el = this;
-        } else {
-            var $el = this.find(opt.handle);
-        }
-
-        return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
-            if(opt.handle === "") {
-                var $drag = $(this).addClass('draggable');
+        return this.css('cursor', opt.cursor).on("mousedown", function(e) {
+            if (opt.helper === 'clone') {
+                var $drag = $(this).closest(opt.dragged).clone().css('opacity', 0.5).appendTo(opt.parent);
+                $clone = $drag;
             } else {
-                var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+                var $drag = $(this);
             }
-            var z_idx = $drag.css('z-index'),
+            $drag.addClass('draggable');
+
+            var z_idx = z_index = $drag.css('z-index'),
                 drg_h = $drag.outerHeight(),
                 drg_w = $drag.outerWidth(),
                 pos_y = $drag.offset().top + drg_h - e.pageY,
@@ -29,21 +27,17 @@
                     if (!z_index) {
                         z_index = z_idx;
                     } 
-                    $(this).removeClass('draggable').closest(opt.dragged).css('z-index', z_index);
+                    $drag.removeClass('draggable').closest(opt.dragged).css('z-index', z_index);
                     if (typeof fn === 'function') {
-                        fn(this);
+                        fn(this, $clone, 1);
                     }
                 });
             });
             e.preventDefault(); // disable selection
         }).on("mouseup", function() {
-            if(opt.handle === "") {
-                $(this).removeClass('draggable');
-            } else {
-                $(this).removeClass('active-handle').parent().removeClass('draggable');
-            }
+            $this.removeClass('draggable');
             if (typeof fn === 'function') {  
-                fn(this);
+                fn(this, $clone, 2);
             }
         }); 
     }

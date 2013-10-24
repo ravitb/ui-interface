@@ -81,6 +81,9 @@ var Facade = {
 			draggable : function (element, options, fn) {
 				return core.dom.draggable(element, options, fn); //Is the return value ok?
 			},
+			// clone_element : function(element, parent) {
+			// 	return core.dom.clone_element(element, parent);
+			// }
 			create_element : function (element, config) {
                 var i, child, text;
                 el = core.dom.create(element);
