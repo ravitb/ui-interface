@@ -20,20 +20,21 @@
                 pos_y = $drag.offset().top + drg_h - e.pageY,
                 pos_x = $drag.offset().left + drg_w - e.pageX;
             $drag.closest(opt.dragged).css('z-index', opt.z_index + 1).end().parents().on("mousemove", function(e) {
+                // e.stopPropagation();
+                e.preventDefault();
                 $('.draggable').closest(opt.dragged).offset({
                     top:e.pageY + pos_y - drg_h,
                     left:e.pageX + pos_x - drg_w
-                }).on("mouseup", function() {
-                    if (!z_index) {
-                        z_index = z_idx;
-                    } 
-                    $drag.removeClass('draggable').closest(opt.dragged).css('z-index', z_index);
-                    if (typeof fn === 'function') {
-                        fn(this, $clone, 1);
-                    }
                 });
+            }).on("mouseup", function() {
+                if (!z_index) {
+                    z_index = z_idx;
+                } 
+                $drag.removeClass('draggable').closest(opt.dragged).css('z-index', z_index);
+                if (typeof fn === 'function') {
+                    fn(this, $clone, 1);
+                }
             });
-            e.preventDefault(); // disable selection
         }).on("mouseup", function() {
             $this.removeClass('draggable');
             if (typeof fn === 'function') {  
