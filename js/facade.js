@@ -9,6 +9,9 @@ var Facade = {
 				}
 				return CONTAINER.query(selector, context);
 			},
+			find_element : function (element, selector) {
+				return core.dom.find(element, selector);
+			},
 			add_event : function (element, type, fn) {
 				return core.dom.bind(element, type, fn);
 			},

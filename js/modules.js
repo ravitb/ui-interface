@@ -163,7 +163,7 @@ CORE.create_module('canvas-container', function(facade) {
             },
             indexing : function () {
                 this.iterate( function (sheet, layer) {
-                    facade.data(sheet, {'layer' : layer})
+                    facade.data(sheet, {'layer' : layer});
                 });
             },
             iterate : function (fn) {
@@ -180,6 +180,7 @@ CORE.create_module('canvas-container', function(facade) {
                         this.cut_layer(layer);
                     } 
                     this.push_layer(sheet);
+                    this.indexing();
                 }
                 this.layer_activation();
             },
@@ -197,20 +198,19 @@ CORE.create_module('canvas-container', function(facade) {
         },
         interval : 200,
         z_index : 10,
+        tool : '',
         init : function () {
-            console.log('init', this);
-            var that = this,
-                delete_btn,
-                sheet;
+            var that = this;
             facade.listen({
                 'create_canvas' : function (opt) {
-                    sheet = that.canvas(opt);
-                    delete_btn = facade.find('header .close', sheet);
-                    facade.add_event(delete_btn, 'click', function(e) {
-                        that.remove_sheet(e);
-                    });
+                    that.canvas(opt);
+                },
+                'tool-selected' : function (opt) {
+                    that.tool = opt.id;
                 }
             });
+
+
         },
         destroy : function () {
             var delete_btn;
@@ -218,25 +218,39 @@ CORE.create_module('canvas-container', function(facade) {
                 delete_btn = facade.find('header .close', sheet[i]);
                 facade.remove_event(delete_btn, 'click', this.remove_sheet(sheet));
             }
+            facade.ignore(['create_canvas']);
         },
         canvas : function (opt) {
             var that = this,
                 container = facade.find(),
                 element = this.create(container, opt),
-                header;
-        
-            header = facade.find('header', element);
+                header,
+                delete_btn,
+                content;
+            
+            console.log('canvas', facade.html(element));
+            delete_btn = facade.find_element('header .close', element);
+            facade.add_event(delete_btn, 'click', function(e) {
+                that.remove_sheet(e);
+            });
+            content = facade.find_element(element, '.content');
+            facade.add_event(content, 'click', function(e){
+                that.reorder_canvas(element);
+                console.log('tools', that.tool);
+                // var input = facade.create_element()
+
+            });
+            header = facade.find('header', element);        
             facade.draggable(header, { 
                     dragged : '.canvas-frame',
                     z_index: facade.css(element, 'z-index'),
-                    helper : 'clone',
-                    parent : '#canvas-container'
+                    // helper : 'clone',
+                    // parent : '#canvas-container'
                 },
                 function(drag, clone) {
                     var sheet = facade.closest(drag, '.canvas-frame');
                     that.reorder_canvas(sheet);
-                    console.log(1);
-                    if (clone !== '') {
+                    if (typeof clone !== 'undefined') {
                         that.add_new(clone, {
                                 parent : '#canvas-container',
                                 css : {
@@ -297,7 +311,56 @@ CORE.create_module('canvas-container', function(facade) {
     }
 });
 
+CORE.create_module('toolkit', function(facade) {
 
+    var tools;
+
+    function each_tool (fn) {
+        for (var i = 0, tool ; tool = tools[i]; i++) {
+            fn(tool);
+        }
+    }
+    function reset () {
+        each_tool(function (tool) {
+            facade.remove_class(tool, 'selected');
+        });
+    }
+
+    return {
+        init : function () {
+            var that = this;
+
+            tools = facade.find('nav ul li');
+            console.log('init tools:', tools.length);
+            if (tools.length > 0 ) {
+                facade.add_class(tools[0], 'selected');
+                facade.notify({
+                    type : 'tool-selected',
+                    data : {id : tools[0].id}
+                })
+            }
+            each_tool(function(tool){
+                facade.add_event(tool, 'click', that.select_tool);
+            });
+
+        },
+        destroy : function () {
+            each_tool(function(tool){
+                facade.remove_event(tool, 'click', that.select_tool);
+            });
+        },
+        select_tool : function(e) {
+            console.log('select_tool', this, e.currentTarget);
+            var li = e.currentTarget;
+            reset();
+            facade.add_class(li, 'selected');
+            facade.notify({
+                type : 'tool-selected',
+                data : {id : li.id}
+            })
+        }
+    }
+});
 
 
 CORE.start_all();

@@ -46,25 +46,32 @@
           </header>
           <form>
             <input type="text" name="name" class="name" placeholder="Title" value="title" tabindex="1" />
-            <input type="text" name="width" class="width" placeholder="Width" value="400" /><label for="height"></label><input type="text" name="height" class="height" placeholder="Height" value="400" />
+            <input type="text" name="width" class="width" placeholder="Width" value="400" /><label for="height">
+            </label><input type="text" name="height" class="height" placeholder="Height" value="400" />
             <div><input type="text" name="color" class="color" placeholder="HEX Number" value="#fff" /></div>
             <!-- <input type="color" name="favcolor" /> -->
             <input type="button" class="reset" name="reset" value="Reset" />
             <input type="button" class="submit" name="submit" value="Submit" />
           </form>
-          
         </div>
       </section>
     </header>
-    
+    <section id="edit-bar">
+      <form id="elmement-data">test test test</form>
+    </section>
     <section id="main-content">
       <section id="canvas-container"></section>
       <!-- <nav class="toolkit"></nav> -->
     </section>
     <section id="toolkit">
+      <header class="box">
+            Pick a tool
+            <!-- <span class="close"></span> -->
+          </header>
       <nav>
         <ul>
-          <li><a href="index.html" data-role="button">Link button</a></li>
+          <li id="link"><img class="link" src="style/images/icons/Link-icon.png" /></li>
+          <li id="img"><img class="link" src="style/images/icons/Link-icon.png" /></li>
         </ul>
       </nav>
     </section>
@@ -76,13 +83,20 @@
           //http://damien.antipa.at/2012/08/20/how-to-detect-dom-manipulations-with-jquery/
       }
     </script>
-    <! --<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script> -->
-    <script>
-      if (!window.jQuery.mobile) {
-          console.log('mobile')
-          // document.write('<script src="js/libs/jquery.mobile-1.3.2.min.js"><\/script>');
-      }
+        <script type="text/javascript">
+        // $(document).bind('mobileinit',function(){
+        //   console.log('mobile init', $.mobile);
+        //   $.mobile.ignoreContentEnabled = "true";
+        // });
     </script>
+    <!--<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script> -->
+    <script>
+      // if (!window.jQuery.mobile) {
+      //     console.log('mobile')
+      //     document.write('<script src="js/libs/jquery.mobile-1.3.2.min.js"><\/script>');
+      // }
+    </script>
+
     <script src="js/libs/handlebars.js"></script>
     <script id="some-template" type="text/x-handlebars-template">
       <header class="box">
@@ -106,3 +120,5 @@
     </script> 
   </body>
 </html>
+          <!-- 03-5302555
+          0732132115 -->

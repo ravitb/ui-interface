@@ -85,18 +85,12 @@ var CORE = (function ($, hb){
                 query : function (selector, context) {
                     var resault = {},
                         that = this,
-                        jqElement, 
-                        i = 0,
-                        test;
+                        jqElement;
+
                     if (context && context.find) {
                         jqElement = context.find(selector);
-                        test = true;
                     } else {
                         jqElement = $(selector);
-                        test = false;
-                    }
-                    if (selector === '.close') {
-                        console.log('close:', context, jqElement);
                     }
                     resault = jqElement.get();
                     resault.length = jqElement.length;
@@ -137,6 +131,9 @@ var CORE = (function ($, hb){
                         obj = $.extend(obj, args[i]);
                     }
                     return obj;
+                },
+                find : function (element, selector) {
+                    return $(element).find(selector);
                 },
                 extend : function () {
                     $.extend(arguments);
@@ -210,16 +207,6 @@ var CORE = (function ($, hb){
                         return $(element);
                     }
                 },
-                // clone_element : function (element, parent) {
-                //     var $parent, 
-                //         $new_element;
-                //     if (!parent) {
-                //         $parent = $('body');
-                //     } else {
-                //         $parent = $(parent);
-                //     }
-                //     return $new_element = $(element).clone().appendTo($parent);
-                // }
                 shift_args : function () {
                     Array.prototype.shift.call(arguments);
                     return arguments;
