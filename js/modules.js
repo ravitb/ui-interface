@@ -228,17 +228,23 @@ CORE.create_module('canvas-container', function(facade) {
                 delete_btn,
                 content;
             
-            console.log('canvas', facade.html(element));
             delete_btn = facade.find_element('header .close', element);
             facade.add_event(delete_btn, 'click', function(e) {
                 that.remove_sheet(e);
             });
             content = facade.find_element(element, '.content');
             facade.add_event(content, 'click', function(e){
+                e.stopPropagation();
                 that.reorder_canvas(element);
-                console.log('tools', that.tool);
-                // var input = facade.create_element()
+                
+                if (e.target === e.currentTarget) {
+                    var input = facade.create_element("input", { 'class' : 'input-box' })
+                        pos = facade.mouse_position(content, e);
 
+                    facade.append(content, input);
+                    facade.css(input,{'position' : 'absolute'});
+                    facade.css(input, pos);
+                }
             });
             header = facade.find('header', element);        
             facade.draggable(header, { 

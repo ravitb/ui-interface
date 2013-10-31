@@ -45,6 +45,9 @@ var Facade = {
 			data : function (element, key, value) {
 				return core.dom.data(element, key, value);
 			},
+			mouse_position : function (element, event) {
+				return core.dom.mouse_position(element, event);
+			},
 			animate : function () {
 				return core.dom.animate(arguments);
 			},
@@ -90,7 +93,7 @@ var Facade = {
 			create_element : function (element, config) {
                 var i, child, text;
                 el = core.dom.create(element);
-                
+
                 if (config) {
                     if (config.children && core.is_arr(config.children)) {
                         i = 0;
@@ -110,7 +113,7 @@ var Facade = {
             },
             get_template : function (name, data) {
             	return core.template.get(name, data);
-            },
+            }
 		};
 	}
 }

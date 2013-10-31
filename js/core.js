@@ -132,16 +132,17 @@ var CORE = (function ($, hb){
                     }
                     return obj;
                 },
-                find : function (element, selector) {
-                    return $(element).find(selector);
-                },
                 extend : function () {
+                    console.log(arguments);
                     $.extend(arguments);
                     return arguments;
                 },
                 create : function (element) {
                     // return $(el);
                     return document.createElement(element);
+                },
+                find : function (element, selector) {
+                    return $(element).find(selector);
                 },
                 apply_attrs : function (element, attrs) {
                     return $(element).attr(attrs);
@@ -161,6 +162,12 @@ var CORE = (function ($, hb){
                         return $(element).data(key);
                     } else {
                         return $(element).data(key, value);
+                    }
+                },
+                mouse_position : function (element, event) {
+                    return {
+                        left : event.pageX - $(element).offset().left,
+                        top : event.pageY - $(element).offset().top,
                     }
                 },
                 animate : function (element, properties, duration, easing, fn) {
