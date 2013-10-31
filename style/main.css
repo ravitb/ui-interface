@@ -223,10 +223,14 @@
       }
       
 
-      #edit-bar {
-        background-color: #D0D3D5;
+      #edit-navigation {
+        min-height: 1rem;
         margin: 0;
         padding: 0.2rem 1rem;
+        background-color: #D1D3D5;
       }
-      
+      #edit-navigation .create-element{
+        width: 2.4rem;
+        height: 1.2rem;
+      }
     /*#0B0C10*/

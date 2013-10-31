@@ -199,6 +199,7 @@ CORE.create_module('canvas-container', function(facade) {
         interval : 200,
         z_index : 10,
         tool : '',
+        tool_data : {},
         init : function () {
             var that = this;
             facade.listen({
@@ -207,7 +208,11 @@ CORE.create_module('canvas-container', function(facade) {
                 },
                 'tool-selected' : function (opt) {
                     that.tool = opt.id;
+                },
+                'new-element-data' : function (opt) {
+                    that.tool_data = opt;
                 }
+
             });
 
 
@@ -238,12 +243,12 @@ CORE.create_module('canvas-container', function(facade) {
                 that.reorder_canvas(element);
                 
                 if (e.target === e.currentTarget) {
-                    var input = facade.create_element("input", { 'class' : 'input-box' })
-                        pos = facade.mouse_position(content, e);
+                    var position = facade.mouse_position(content, e),
+                        new_el = facade.create_element(that.tool_data.type, that.tool_data.attr);
 
-                    facade.append(content, input);
-                    facade.css(input,{'position' : 'absolute'});
-                    facade.css(input, pos);
+                    facade.css(new_el, {position : 'absolute'});
+                    facade.css(new_el, position);
+                    facade.append(content, new_el);
                 }
             });
             header = facade.find('header', element);        
@@ -313,6 +318,85 @@ CORE.create_module('canvas-container', function(facade) {
             }
             element.appendTo($(opt.parent));
 
+        }
+    }
+});
+
+CORE.create_module('edit-navigation', function(facade) {
+    return {
+        init : function () {
+            var that = this;
+            facade.listen({
+                'tool-selected' : function (opt) {
+                    that.create_tool(opt);
+                }
+            })
+        },
+        destroy : function () {
+            facade.ignore(['create-tool']);
+        },
+        create_tool : function (opt) {
+            var that = this,
+                form = facade.find('.edit'),
+                submit = facade.create_element('input', {'class' : 'create-element', value : 'ok', type : 'button'}),
+                form_elements,
+                form_data,
+                data = {attr : {}}
+                el;
+            
+            facade.remove('#link-form');
+            switch (opt.id) {
+                case 'link' : 
+                    form_elements = that.create_link(opt);
+                    data.type = 'a';
+                    break;
+                case 'img' :
+                    form_elements = that.create_img(opt);
+                    data.type = 'img';
+                    break;
+                case 'p' :
+                    form_elements = that.create_p(opt);
+                    data.type = 'p';
+                    break;
+                default : console.log('Tool type does not exist', opt.id);
+            }
+            facade.append(form_elements, submit);
+            facade.prepend(form, form_elements);
+
+            facade.add_event(submit, 'click', function () {
+                var form_data = facade.find('input');
+                for(var i = 0, l = form_data.length; i < l; i++) {
+                    if (form_data[i].value.length > 2) { //counting "".length = 2
+                        data.attr[form_data[i].id] = form_data[i].value;
+                    }
+                }
+                console.log('attr.text', data);
+                facade.notify({
+                    type : 'new-element-data',
+                    data : data
+                })
+            })
+        },
+        create_link : function (opt) {
+            var form_elements = facade.create_element('div', {id : 'link-form', children: [
+                                    facade.create_element('input', {id : 'text', 'class' : 'text', value : 'test1'}),
+                                    facade.create_element('input', {id : 'href', 'class' : 'href', value : 'test2'})
+                                ]});
+            return form_elements;
+        },
+        create_img : function (opt) {
+            var form_elements = facade.create_element('div', {id : 'link-form', children: [
+                                    facade.create_element('input', {id : 'title', 'class' : 'title', value : 'test1'}),
+                                    facade.create_element('input', {id : 'src', 'class' : 'image', value : 'http://lorempixel.com/60/60/'}),
+
+                                ]});
+            return form_elements;
+        },
+        create_p : function (opt) {
+            var form_elements = facade.create_element('div', {id : 'link-form', children: [
+                                    facade.create_element('input', {id : 'text', 'class' : 'text', value : 'text area?! lalalalala land'})
+                                ]});
+            return form_elements;
         }
     }
 });

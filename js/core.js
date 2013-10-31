@@ -154,6 +154,7 @@ var CORE = (function ($, hb){
                     return $(element).prepend(content);
                 },
                 remove : function (element, selector) {
+                    console.log('remove', $(element), selector);
                     return $(element).remove(selector);
                 },
                 data : function (element, key, value) {
