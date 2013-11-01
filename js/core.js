@@ -141,8 +141,8 @@ var CORE = (function ($, hb){
                     // return $(el);
                     return document.createElement(element);
                 },
-                find : function (element, selector) {
-                    return $(element).find(selector);
+                find : function (selector, context) {
+                    return $(context).find(selector);
                 },
                 apply_attrs : function (element, attrs) {
                     return $(element).attr(attrs);
@@ -154,7 +154,6 @@ var CORE = (function ($, hb){
                     return $(element).prepend(content);
                 },
                 remove : function (element, selector) {
-                    console.log('remove', $(element), selector);
                     return $(element).remove(selector);
                 },
                 data : function (element, key, value) {

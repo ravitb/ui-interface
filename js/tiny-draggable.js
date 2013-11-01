@@ -13,6 +13,16 @@
                 var $drag = $(this);
             }
             $drag.addClass('draggable');
+            
+            var stopDragging = function () {
+                if (!z_index) {
+                    z_index = z_idx;
+                } 
+                $drag.removeClass('draggable').closest(opt.dragged).css('z-index', z_index);
+                if (typeof fn === 'function') {
+                    fn(this, $clone);
+                }
+            }
 
             var z_idx = z_index = $drag.css('z-index'),
                 drg_h = $drag.outerHeight(),
@@ -26,15 +36,14 @@
                     top:e.pageY + pos_y - drg_h,
                     left:e.pageX + pos_x - drg_w
                 });
-            })
+            });
+
             $drag.on("mouseup", function() {
-                if (!z_index) {
-                    z_index = z_idx;
-                } 
-                $drag.removeClass('draggable').closest(opt.dragged).css('z-index', z_index);
-                if (typeof fn === 'function') {
-                    fn(this, $clone);
-                }
+                stopDragging();
+            });
+
+            $drag.on("click", function() {
+                stopDragging();
             });
         }).on("mouseup", function() {
             $this.removeClass('draggable');
