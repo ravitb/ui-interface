@@ -64,17 +64,19 @@
       <!-- <nav class="toolkit"></nav> -->
     </section>
     <section id="toolkit">
-      <header class="box">
-            Pick a tool
-            <!-- <span class="close"></span> -->
-          </header>
-      <nav>
-        <ul>
-          <li id="link"><img class="link" src="style/images/icons/Link-icon.png" /></li>
-          <li id="img"><img class="link" src="style/images/icons/Link-icon.png" /></li>
-          <li id="p"><img class="link" src="style/images/icons/Link-icon.png" /></li>
-        </ul>
-      </nav>
+      <div class="tools-frame">
+        <header class="box">
+              Pick a tool
+              <!-- <span class="close"></span> -->
+            </header>
+        <nav>
+          <ul>
+            <li id="link"><img class="link" src="style/images/icons/Link-icon.png" /></li>
+            <li id="img"><img class="link" src="style/images/icons/Link-icon.png" /></li>
+            <li id="p"><img class="link" src="style/images/icons/Link-icon.png" /></li>
+          </ul>
+        </nav>
+      </div>
     </section>
     <footer></footer>
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script> -->
@@ -99,12 +101,15 @@
     </script>
 
     <script src="js/libs/handlebars.js"></script>
-    <script id="some-template" type="text/x-handlebars-template">
+    <script id="canvas-template" type="text/x-handlebars-template">
       <header class="box">
         {{title}}
         <span class="close"></span>
       </header>
       <div class="content"></div>
+    </script>
+    <script id="tool-template" type="text/x-handlebars-template">
+      
     </script>
     <script src="js/tiny-draggable.js"></script>
     <script src="js/core.js"></script>

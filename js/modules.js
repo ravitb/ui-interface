@@ -125,7 +125,7 @@ CORE.create_module('init-canvas', function (facade) {
                         },
                         name : this.input[0].value  
                     } 
-                    
+
             facade.notify({
                  type : 'create_canvas',
                  data :res
@@ -264,28 +264,11 @@ CORE.create_module('canvas-container', function(facade) {
                 e.stopPropagation();
             });
             header = facade.find('header', element);        
-            facade.draggable(header, { 
-                    dragged : '.canvas-frame',
-                    z_index: facade.css(element, 'z-index'),
-                    // helper : 'clone',
-                    // parent : '#canvas-container'
-                },
-                function(drag, clone) {
-                    var sheet = facade.closest(drag, '.canvas-frame');
-                    that.reorder_canvas(sheet);
-                    if (typeof clone !== 'undefined') {
-                        that.add_new(clone, {
-                                parent : '#canvas-container',
-                                css : {
-                                    'opacity' : 1
-                                }
-                        });
-                    }
-            });            
+            facade.draggable(header, {dragged : '.canvas-frame', z_index: facade.css(element, 'z-index')});            
             return element;
         },
         create : function (container, opt) {
-            var template =  facade.get_template('#some-template', {'title' : opt.name}),
+            var template =  facade.get_template('#canvas-template', {'title' : opt.name}),
                 element  = facade.append(facade.create_element('div', {'class' : 'canvas-frame'}), template),
                 layer = this.sheets.push_layer(element),
                 content;
@@ -353,7 +336,8 @@ CORE.create_module('edit-navigation', function(facade) {
                 submit = facade.create_element('input', {'class' : 'create-element', value : 'ok', type : 'button'}),
                 form_elements,
                 form_data,
-                data = {attr : {}}
+                data = {attr : {}},
+                form_data,
                 el;
             
             facade.remove('#link-form');
@@ -376,13 +360,13 @@ CORE.create_module('edit-navigation', function(facade) {
             facade.prepend(form, form_elements);
 
             facade.add_event(submit, 'click', function () {
-                var form_data = facade.find('input');
+                form_data = facade.find('input');
                 for(var i = 0, l = form_data.length; i < l; i++) {
                     if (form_data[i].value.length > 2) { //counting "".length = 2
                         data.attr[form_data[i].id] = form_data[i].value;
                     }
                 }
-                console.log('attr.text', data);
+                
                 facade.notify({
                     type : 'new-element-data',
                     data : data
@@ -399,8 +383,7 @@ CORE.create_module('edit-navigation', function(facade) {
         create_img : function (opt) {
             var form_elements = facade.create_element('div', {id : 'link-form', children: [
                                     facade.create_element('input', {id : 'title', 'class' : 'title', value : 'test1'}),
-                                    facade.create_element('input', {id : 'src', 'class' : 'image', value : 'http://lorempixel.com/60/60/'}),
-
+                                    facade.create_element('input', {id : 'src', 'class' : 'image', value : 'http://lorempixel.com/60/60/'})
                                 ]});
             return form_elements;
         },
@@ -430,10 +413,11 @@ CORE.create_module('toolkit', function(facade) {
 
     return {
         init : function () {
-            var that = this;
+            var that = this,
+                header = facade.find('header');
 
             tools = facade.find('nav ul li');
-            console.log('init tools:', tools.length);
+
             if (tools.length > 0 ) {
                 facade.add_class(tools[0], 'selected');
                 facade.notify({
@@ -444,12 +428,14 @@ CORE.create_module('toolkit', function(facade) {
             each_tool(function(tool){
                 facade.add_event(tool, 'click', that.select_tool);
             });
+            facade.draggable(header, {dragged : '.tools-frame'});  
 
         },
         destroy : function () {
             each_tool(function(tool){
                 facade.remove_event(tool, 'click', that.select_tool);
             });
+            facade.ignore(['tool-selected']);
         },
         select_tool : function(e) {
             console.log('select_tool', this, e.currentTarget);
