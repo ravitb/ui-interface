@@ -43,7 +43,7 @@
       <div class="wrapper">
         <header class="box">
           Create Canvas
-          <span class="close"></span>
+          <span class="remove"></span>
         </header>
         <form>
           <input type="text" name="name" class="name" placeholder="Title" value="title" tabindex="1" />
@@ -67,13 +67,13 @@
       <div class="tools-frame">
         <header class="box">
               Pick a tool
-              <!-- <span class="close"></span> -->
+              <!-- <span class="remove"></span> -->
             </header>
         <nav>
           <ul>
             <li id="link"><img class="link" src="style/images/icons/Link-icon.png" /></li>
             <li id="img"><img class="link" src="style/images/icons/Link-icon.png" /></li>
-            <li id="p"><img class="link" src="style/images/icons/Link-icon.png" /></li>
+            <li id="paragraph"><img class="link" src="style/images/icons/Link-icon.png" /></li>
           </ul>
         </nav>
       </div>
@@ -104,14 +104,11 @@
     <script id="canvas-template" type="text/x-handlebars-template">
       <header class="box">
         {{title}}
-        <span class="close"></span>
+        <span class="remove"></span>
       </header>
       <div class="content"></div>
     </script>
-    <script id="tool-template" type="text/x-handlebars-template">
-      
-    </script>
-    <script src="js/tiny-draggable.js"></script>
+    <script src="js/tiny-pluggins.js"></script>
     <script src="js/core.js"></script>
     <script src="js/facade.js"></script>
     <script src="js/modules.js"></script>

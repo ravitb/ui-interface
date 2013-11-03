@@ -44,7 +44,7 @@ CORE.create_module('init-canvas', function (facade) {
 
     return {
         interval : 100,
-        hide : facade.find('.close'),
+        hide : facade.find('.remove'),
         input : facade.find('input'),
         dialog : facade.find('.wrapper'),
 
@@ -67,7 +67,7 @@ CORE.create_module('init-canvas', function (facade) {
                             that.submit();
                         });
                         break;
-                    default :   console.log('Unable to complete the selected action');
+                    // default :   console.log('Unable to complete the selected action');
                 }
             });
             facade.listen({
@@ -96,7 +96,7 @@ CORE.create_module('init-canvas', function (facade) {
                             that.submit();
                         });
                         break;
-                    default :   console.log('Unable to complete the selected action');
+                    // default :   console.log('Unable to complete the selected action');
                 }
             });
         },
@@ -219,12 +219,12 @@ CORE.create_module('canvas-container', function(facade) {
             var that = this;
             facade.listen({
                 'create_canvas' : function (opt) {
-                    that.canvas(opt);
+                    that.create(opt);
                 },
                 'tool-selected' : function (opt) {
                     that.tool = opt.id;
                 },
-                'new-element-data' : function (opt) {
+                'create-element' : function (opt) {
                     that.tool_data = opt;
                 }
             });
@@ -232,43 +232,45 @@ CORE.create_module('canvas-container', function(facade) {
         destroy : function () {
             var delete_btn;
             for (i = 0, l = sheets.data.length; i < l; i++) {
-                delete_btn = facade.find('header .close', sheet[i]);
-                facade.remove_event(delete_btn, 'click', this.remove_sheet(sheet));
+                delete_btn = facade.find('header .remove', sheet[i]);
+                facade.remove_event(delete_btn, 'click', this.remove(sheet));
             }
             facade.ignore(['create_canvas']);
         },
-        canvas : function (opt) {
+        create : function (opt) {
             var that = this,
                 container = facade.find(),
-                element = this.create(container, opt),
-                header,
-                delete_btn,
-                content;
+                canvas = this.template(container, opt),
+                header = facade.find('header', canvas),
+                delete_btn = facade.find_element('header .remove', canvas),
+                content = facade.find_element('.content', canvas);
             
-            delete_btn = facade.find_element('header .close', element);
             facade.add_event(delete_btn, 'click', function(e) {
-                that.remove_sheet(e);
+                that.remove(e);
             });
-            content = facade.find_element('.content', element);
+            
             facade.add_event(content, 'click', function(e){
-                that.reorder_canvas(element);
-                
-                if (e.target === e.currentTarget) {
-                    var position = facade.mouse_position(content, e),
-                        new_el = facade.create_element(that.tool_data.type, that.tool_data.attr);
+                that.reorder(canvas);
 
-                    facade.css(new_el, {position : 'absolute'});
-                    facade.css(new_el, position);
-                    facade.append(content, new_el);
+                if (e.target === e.currentTarget) {
+                    position = facade.mouse_position(content, e),
+                    that.add_element(content, position);
                 }
                 e.stopPropagation();
             });
-            header = facade.find('header', element);        
-            facade.draggable(header, {dragged : '.canvas-frame', z_index: facade.css(element, 'z-index')});            
-            return element;
+            
+            facade.draggable(header, { 
+                    dragged : '.canvas-frame',
+                    z_index: facade.css(canvas, 'z-index'),
+                },
+                function(drag) {
+                    var sheet = facade.closest(drag, '.canvas-frame');
+                    that.reorder(sheet);
+                });
+            return canvas;
         },
-        create : function (container, opt) {
-            var template =  facade.get_template('#canvas-template', {'title' : opt.name}),
+        template : function (container, opt) {
+            var template =  facade.template('#canvas-template', {'title' : opt.name}),
                 element  = facade.append(facade.create_element('div', {'class' : 'canvas-frame'}), template),
                 layer = this.sheets.push_layer(element),
                 content;
@@ -286,14 +288,14 @@ CORE.create_module('canvas-container', function(facade) {
             return element;
 
         },
-        reorder_canvas : function (element) {
+        reorder : function (element) {
             this.sheets.layer_up(element);
             var that = this;
             this.sheets.iterate(function(sheet, layer) {
                 facade.css(sheet, {'z-index' : that.z_index + layer});
             });
         },
-        remove_sheet : function (element) {
+        remove : function (element) {
             var that = this,
                 sheet = facade.closest(element.target, '.canvas-frame');
 
@@ -305,13 +307,29 @@ CORE.create_module('canvas-container', function(facade) {
         add_new : function (element, opt) {
             opt = $.extend({}, opt);
 
-            // console.log('add_new', element, opt);
             facade.draggable(element);
             if (opt.css !== '') {
                 facade.css(element, opt.css);
             }
             element.appendTo($(opt.parent));
+        },
+        add_element : function (content, position) {
+            var new_el = facade.create_element(this.tool_data.type, this.tool_data.attr),
+                header = facade.create_element('header', {'class' : 'box', text : 'test1234'}),
+                remove = facade.create_element("span", { 'class' : 'remove'}),
+                wrapper = facade.create_element('div', {'class' : 'element-frame'}),
+                element;
 
+            element = facade.prepend(facade.prepend(wrapper, element), facade.append(header, remove));
+            facade.css(element, {position : 'absolute'});
+            facade.css(element, position);
+            facade.append(content, element);
+
+            facade.add_event(remove, 'click', function () {
+               facade.remove(element);
+            });
+
+            facade.draggable(header, {dragged : element});
         }
     }
 });
@@ -328,7 +346,7 @@ CORE.create_module('edit-navigation', function(facade) {
             })
         },
         destroy : function () {
-            facade.ignore(['create-tool']);
+            facade.ignore(['tool-selected']);
         },
         create_tool : function (opt) {
             var that = this,
@@ -350,7 +368,7 @@ CORE.create_module('edit-navigation', function(facade) {
                     form_elements = that.create_img(opt);
                     data.type = 'img';
                     break;
-                case 'p' :
+                case 'paragraph' :
                     form_elements = that.create_p(opt);
                     data.type = 'p';
                     break;
@@ -368,15 +386,19 @@ CORE.create_module('edit-navigation', function(facade) {
                 }
                 
                 facade.notify({
-                    type : 'new-element-data',
+                    type : 'create-element',
                     data : data
-                })
-            })
+                });
+            });
         },
         create_link : function (opt) {
+            // var text = (typeof opt === 'undefined') ? '' : opt.text.value,
+            //     href = (!!opt.href.value) ? '' : opt.href.value;
+            console.log('create_link', opt);
+
             var form_elements = facade.create_element('div', {id : 'link-form', children: [
-                                    facade.create_element('input', {id : 'text', 'class' : 'text', value : 'test1'}),
-                                    facade.create_element('input', {id : 'href', 'class' : 'href', value : 'test2'})
+                                    facade.create_element('input', {id : 'text', 'class' : 'text', value : ''}),
+                                    facade.create_element('input', {id : 'href', 'class' : 'href', value : ''})
                                 ]});
             return form_elements;
         },
@@ -426,18 +448,18 @@ CORE.create_module('toolkit', function(facade) {
                 })
             }
             each_tool(function(tool){
-                facade.add_event(tool, 'click', that.select_tool);
+                facade.add_event(tool, 'click', that.select);
             });
             facade.draggable(header, {dragged : '.tools-frame'});  
 
         },
         destroy : function () {
             each_tool(function(tool){
-                facade.remove_event(tool, 'click', that.select_tool);
+                facade.remove_event(tool, 'click', that.select);
             });
             facade.ignore(['tool-selected']);
         },
-        select_tool : function(e) {
+        select : function(e) {
             console.log('select_tool', this, e.currentTarget);
             var li = e.currentTarget;
             reset();

@@ -67,14 +67,14 @@
         background-color: rgba(0,0,0, 0.4);
         /*cursor: move;*/
       }
-      header.box .close {
+      header.box .remove {
         float: right;
         overflow: hidden;
         padding: 0 0.8rem;
         font-size: 1rem;
         cursor: pointer;
       }
-      header.box .close:before {
+      header.box .remove:before {
         content: "×";
         
       }

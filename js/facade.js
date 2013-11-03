@@ -101,17 +101,17 @@ var Facade = {
                             el.appendChild(child);
                             i++;
                         }
-                        delete config.children;
+                        // delete config.children;
                     }
                     if (config.text) {
                         el.appendChild(document.createTextNode(config.text));
-                        delete config.text;
+                        // delete consfig.text;
                     }
                     core.dom.apply_attrs(el, config);
                 }
                 return el;
             },
-            get_template : function (name, data) {
+            template : function (name, data) {
             	return core.template.get(name, data);
             }
 		};

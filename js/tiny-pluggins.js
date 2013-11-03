@@ -1,3 +1,24 @@
+(function(old) {
+  $.fn.attr = function() {
+    if(arguments.length === 0) {
+      if(this.length === 0) {
+        return null;
+      }
+
+      var obj = {};
+      $.each(this[0].attributes, function() {
+        if(this.specified) {
+          obj[this.name] = this.value;
+        }
+      });
+      return obj;
+    }
+
+    return old.apply(this, arguments);
+  };
+})($.fn.attr);
+//http://stackoverflow.com/questions/14645806/get-all-attributes-of-an-element-using-jquery
+
 (function($) {
     $.fn.drags = function(opt, fn) {
         var $this = $(this),
@@ -22,6 +43,7 @@
                 if (typeof fn === 'function') {
                     fn(this, $clone);
                 }
+                return false;
             }
 
             var z_idx = z_index = $drag.css('z-index'),
@@ -36,6 +58,7 @@
                     top:e.pageY + pos_y - drg_h,
                     left:e.pageX + pos_x - drg_w
                 });
+                return false;
             });
 
             $drag.on("mouseup", function() {
@@ -50,6 +73,7 @@
             if (typeof fn === 'function') {  
                 fn(this, $clone);
             }
+            return false;
         }); 
     }
 })(jQuery);
