@@ -101,10 +101,9 @@ CORE.create_module('init-canvas', function (facade) {
             });
         },
         create : function () {
-            var drag = facade.find('header'),
-                dragged = facade.find('.wrapper');
+            var dialog = facade.find('.wrapper');
 
-            facade.draggable(this.drag, {dragged : this.dragged});
+            facade.draggable(dialog, {handle : 'header', cursor : 'crosshair'});
             facade.show(this.dialog);
             facade.animate(this.dialog, {opacity: '1'}, this.interval);
         },
@@ -244,34 +243,47 @@ CORE.create_module('canvas-container', function(facade) {
                 header = facade.find('header', canvas),
                 delete_btn = facade.find_element('header .remove', canvas),
                 content = facade.find_element('.content', canvas);
-            
+
+            facade.prepend(container, canvas);
+            this.reorder(canvas);
+            console.log('create',canvas);
+
+            // console.log('z-index', facade.css(collection, 'z-index'));
             facade.add_event(delete_btn, 'click', function(e) {
                 that.remove(e);
             });
             
             facade.add_event(content, 'click', function(e){
                 that.reorder(canvas);
-
-                if (e.target === e.currentTarget) {
-                    position = facade.mouse_position(content, e),
-                    that.add_element(content, position);
+                console.log('no new element', (e.target === e.currentTarget), that.tool_data === {});
+                if (e.target === e.currentTarget && that.tool_data !== {}) {
+                    position = facade.mouse_position(content, e);
+                    if (!facade.is_empty_obj(that.tool_data)) {
+                        that.add_element(content, position);
+                    } else {
+                        console.log('Please select a tool first.');
+                    }
                 }
                 e.stopPropagation();
             });
             
-            facade.draggable(header, { 
-                    dragged : '.canvas-frame',
-                    z_index: facade.css(canvas, 'z-index'),
-                },
-                function(drag) {
-                    var sheet = facade.closest(drag, '.canvas-frame');
-                    that.reorder(sheet);
-                });
+            facade.draggable(canvas, {
+                opacity : 0.7,
+                handle : 'header', 
+                cursor : 'crosshair', 
+                stack : '.canvas',
+                stop : function(e, ui) {
+                    var top = facade.draggable.apply(this, canvas, 'option', 'stack')
+                    facade.remove_class('.canvas', 'active');
+                    facade.add_class(top, 'active');
+                    console.log('draggable', facade.find('.canvas'), top);
+                }
+            });
             return canvas;
         },
         template : function (container, opt) {
             var template =  facade.template('#canvas-template', {'title' : opt.name}),
-                element  = facade.append(facade.create_element('div', {'class' : 'canvas-frame'}), template),
+                element  = facade.append(facade.create_element('div', {'class' : 'canvas'}), template),
                 layer = this.sheets.push_layer(element),
                 content;
 
@@ -279,8 +291,6 @@ CORE.create_module('canvas-container', function(facade) {
             facade.css(element, {'top' : (layer*2 + 4) + 'rem',
                                  'left' : (layer*2 + 4) + 'rem',
                                  'z-index' : Math.min(layer*1 + this.z_index*1, 999)});
-
-            facade.prepend(container, element);
 
             content = facade.find_element('.content', element);
             facade.css(content, opt.css);
@@ -297,7 +307,7 @@ CORE.create_module('canvas-container', function(facade) {
         },
         remove : function (element) {
             var that = this,
-                sheet = facade.closest(element.target, '.canvas-frame');
+                sheet = facade.closest(element.target, '.canvas');
 
             facade.animate(sheet, {opacity: '0'}, this.interval, function() {
                 that.sheets.remove(sheet); //remove from model
@@ -320,7 +330,7 @@ CORE.create_module('canvas-container', function(facade) {
                 wrapper = facade.create_element('div', {'class' : 'element-frame'}),
                 element;
 
-            element = facade.prepend(facade.prepend(wrapper, element), facade.append(header, remove));
+            element = facade.prepend(facade.prepend(wrapper, new_el), facade.append(header, remove), this.tool_data);
             facade.css(element, {position : 'absolute'});
             facade.css(element, position);
             facade.append(content, element);
@@ -329,7 +339,7 @@ CORE.create_module('canvas-container', function(facade) {
                facade.remove(element);
             });
 
-            facade.draggable(header, {dragged : element});
+            facade.draggable(element, {handle : 'header', cursor : 'crosshair' , containment : '.content'});
         }
     }
 });
@@ -384,7 +394,7 @@ CORE.create_module('edit-navigation', function(facade) {
                         data.attr[form_data[i].id] = form_data[i].value;
                     }
                 }
-                
+                console.log(data);
                 facade.notify({
                     type : 'create-element',
                     data : data
@@ -397,8 +407,8 @@ CORE.create_module('edit-navigation', function(facade) {
             console.log('create_link', opt);
 
             var form_elements = facade.create_element('div', {id : 'link-form', children: [
-                                    facade.create_element('input', {id : 'text', 'class' : 'text', value : ''}),
-                                    facade.create_element('input', {id : 'href', 'class' : 'href', value : ''})
+                                    facade.create_element('input', {id : 'text', 'class' : 'text', value : 'testi test'}),
+                                    facade.create_element('input', {id : 'href', 'class' : 'href', value : 'linki link blink'})
                                 ]});
             return form_elements;
         },
@@ -436,7 +446,7 @@ CORE.create_module('toolkit', function(facade) {
     return {
         init : function () {
             var that = this,
-                header = facade.find('header');
+                toolbox = facade.find('.tools-frame');
 
             tools = facade.find('nav ul li');
 
@@ -450,7 +460,7 @@ CORE.create_module('toolkit', function(facade) {
             each_tool(function(tool){
                 facade.add_event(tool, 'click', that.select);
             });
-            facade.draggable(header, {dragged : '.tools-frame'});  
+            facade.draggable(toolbox, {handle : 'header', cursor : 'crosshair'});  
 
         },
         destroy : function () {

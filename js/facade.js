@@ -84,12 +84,10 @@ var Facade = {
 			each : function (collection, fn) {
 				return core.dom.each(collection, fn);
 			},
-			draggable : function (element, options, fn) {
-				return core.dom.draggable(element, options, fn); //Is the return value ok?
+			draggable : function () {
+				var args = Array.prototype.slice.apply(arguments);
+				return core.dom.ui.draggable.apply(this, args);
 			},
-			// clone_element : function(element, parent) {
-			// 	return core.dom.clone_element(element, parent);
-			// }
 			create_element : function (element, config) {
                 var i, child, text;
                 el = core.dom.create(element);
@@ -113,6 +111,9 @@ var Facade = {
             },
             template : function (name, data) {
             	return core.template.get(name, data);
+            },
+            is_empty_obj : function (obj) {
+            	return core.is_empty_obj(obj);
             }
 		};
 	}

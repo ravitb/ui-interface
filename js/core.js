@@ -133,7 +133,6 @@ var CORE = (function ($, hb){
                     return obj;
                 },
                 extend : function () {
-                    console.log(arguments);
                     $.extend(arguments);
                     return arguments;
                 },
@@ -207,13 +206,6 @@ var CORE = (function ($, hb){
                 each : function (collection, fn) {
                     return $.each(collection, fn);
                 },
-                draggable : function (element, options, fn) {
-                    if (!!$().drags) {
-                        return $(element).drags(options, fn);
-                    } else {
-                        return $(element);
-                    }
-                },
                 shift_args : function () {
                     Array.prototype.shift.call(arguments);
                     return arguments;
@@ -221,7 +213,20 @@ var CORE = (function ($, hb){
                 slice_args : function (args, from, to) { //return an array
                     Array.prototype.slice.apply(arguments, from, to);//***
                     return arguments;
-                }
+                },
+                ui : {
+                    // draggable : function (element, options, fn) {
+                    //     if (!!$().drags) {
+                    //         return $(element).drags(options, fn);
+                    //     } else {
+                    //         return $(element);
+                    //     }
+                    // },
+                    draggable : function (element, options) {
+                        var args = Array.prototype.slice.apply(arguments);
+                        return $(args[0]).draggable(args.slice(1)[0]);
+                    }
+                },
             },
             template : {
                 get : function (name, data) {
@@ -231,25 +236,21 @@ var CORE = (function ($, hb){
 
                     return template(data);
                 }
-
-                // get : function (name) {
-                    // if (hb.templates === 'undefined' || hb.templates[name] === 'undefined') {
-                    //     $.ajax({
-                    //         url : 'js/templates/' + name + '.handlebars',
-                    //         dataType : 'jsonp',
-                    //         success : function (data) {
-                    //             console.log('jsonp', data);
-                    //         },
-                    //         async : false
-                    //     });
-                    // }
-                // }
             },
             is_arr : function (arr) {
                 return $.isArray(arr);  
             },
             is_obj : function (obj) {
                 return $.isPlainObject(obj);
+            },
+            is_empty_obj :  function (obj) {
+                console.log('is_empty_obj', obj);
+                for (var key in obj) {
+                    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                        return false;
+                    }
+                }
+                return true;
             },
             shift_args : function () {
                 return Array.prototype.shift.call(arguments);
