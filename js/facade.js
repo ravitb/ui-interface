@@ -3,7 +3,10 @@ var Facade = {
 
 		var CONTAINER = core.dom.query('#' + module_selector);
 		return {
-			find : function (selector, context) {
+			find : function (selector, context, in_context) {
+				if (in_context) {
+					return core.dom.find(selector, context);
+				}
 				if (!selector) {
 					return CONTAINER;
 				}
@@ -11,6 +14,9 @@ var Facade = {
 			},
 			find_element : function (selector, context) {
 				return core.dom.find(selector, context);
+			},
+			attr : function (element,attrs) {
+				return core.dom.apply_attrs(element, attrs);
 			},
 			add_event : function (element, type, fn) {
 				return core.dom.bind(element, type, fn);
@@ -88,6 +94,10 @@ var Facade = {
 				var args = Array.prototype.slice.apply(arguments);
 				return core.dom.ui.draggable.apply(this, args);
 			},
+			resizable : function () {
+				var args = Array.prototype.slice.apply(arguments);
+				return core.dom.ui.resizable.apply(this, args);
+			},
 			create_element : function (element, config) {
                 var i, child, text;
                 el = core.dom.create(element);
@@ -99,13 +109,13 @@ var Facade = {
                             el.appendChild(child);
                             i++;
                         }
-                        // delete config.children;
+                        delete config.children;
                     }
                     if (config.text) {
                         el.appendChild(document.createTextNode(config.text));
                         // delete consfig.text;
                     }
-                    core.dom.apply_attrs(el, config);
+                    this.attr(el, config);
                 }
                 return el;
             },

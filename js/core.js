@@ -156,7 +156,6 @@ var CORE = (function ($, hb){
                     return $(element).remove(selector);
                 },
                 data : function (element, key, value) {
-                    var test = $(element).data(key, value);
                     if (!value) {
                         return $(element).data(key);
                     } else {
@@ -198,10 +197,18 @@ var CORE = (function ($, hb){
                     return $(element).html(); 
                 },
                 text : function(element, data) {
-                    return $(element).text(data);
+                    if (typeof data === 'undefined') {
+                        return $(element).text();
+                    } else {
+                        return $(element).text(data);
+                    }
                 },
                 val : function(element, data) {
-                    return $(element).val(data);
+                    if (typeof data === 'undefined') {
+                        return $(element).val();
+                    } else {
+                        return $(element).val(data);
+                    }
                 },
                 each : function (collection, fn) {
                     return $.each(collection, fn);
@@ -225,6 +232,10 @@ var CORE = (function ($, hb){
                     draggable : function (element, options) {
                         var args = Array.prototype.slice.apply(arguments);
                         return $(args[0]).draggable(args.slice(1)[0]);
+                    },
+                    resizable : function (element, options) {
+                        var args = Array.prototype.slice.apply(arguments);
+                        return $(args[0]).resizable(args.slice(1)[0]);
                     }
                 },
             },
