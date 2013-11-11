@@ -1,4 +1,8 @@
+      html{ 
+        height:100%;
+      }
       body {
+        height:100%;
         font-size: 62.5%; 
         background-color: rgba(0,0,0,0.8);
       }
@@ -69,16 +73,28 @@
       }
       header.box .remove {
         float: right;
-        overflow: hidden;
-        padding: 0 0.8rem;
-        font-size: 1rem;
+        padding-right: 0.8rem;
+        font-size: 1.4rem;
         cursor: pointer;
       }
       header.box .remove:before {
         content: "×";
-        
+
       }
      
+      header.box .min-max {
+        float: right;
+        padding: 0.3rem;
+        line-height: 1em;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      header.box .min-max:before {
+        content: "_";
+
+      }
+
       #init-canvas form {
         margin: 0.4rem 1.7rem;
       }
@@ -171,11 +187,26 @@
       }
 
       .canvas header {
+        position: relative;
         background-color: pink;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding-right: 48px;
       }
 
       .canvas.active header {
         background-color: #DB8CFF;
+      }
+
+      .canvas header span {
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+
+      .canvas header .min-max {
+        right: 1.6rem;
       }
   
       .canvas .info {
@@ -193,19 +224,15 @@
 
       #toolkit {
         display: inline-block;
+        position: absolute;
+        left: 0;
+        top: 100px;
       }
 
       #toolkit .tools-frame{
         margin: 2rem;
         background-color: aliceblue;
         display: inline-block;
-        /*position: fixed;
-        top: 6rem;
-        right: 4rem;
-        bottom: 6rem;
-        width: 6rem;
-        background-color: #CBCFD2;
-        border: 1px dashed #484848;*/
       }
       
       #toolkit ul {

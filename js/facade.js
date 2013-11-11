@@ -69,6 +69,9 @@ var Facade = {
 			remove_class : function (element, str) {
 				return core.dom.remove_class(element, str);
 			},
+			has_class : function (element, str) {
+				return core.dom.has_class(element, str);
+			},
 			css : function (element, options) {
 				return core.dom.css(element, options);
 			},

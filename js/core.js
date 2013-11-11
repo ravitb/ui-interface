@@ -141,6 +141,7 @@ var CORE = (function ($, hb){
                     return document.createElement(element);
                 },
                 find : function (selector, context) {
+                    // console.log('core find', $(context).find(selector));
                     return $(context).find(selector);
                 },
                 apply_attrs : function (element, attrs) {
@@ -179,10 +180,13 @@ var CORE = (function ($, hb){
                     return $(element).closest(selector, context);
                 },
                 add_class : function (element, str) {
-                    $(element).addClass(str);
+                    return $(element).addClass(str);
                 },
                 remove_class : function (element, str) {
-                    $(element).removeClass(str);
+                    return $(element).removeClass(str);
+                },
+                has_class : function (element, str) {
+                    return $(element).hasClass(str);
                 },
                 css : function (element, options) {
                     return $(element).css(options);
