@@ -39,6 +39,11 @@ var Facade = {
 					core.remove_events(evts, module_selector);
 				}
 			},
+			extend : function () {
+				console.log('Facade extend', arguments);
+				var args = Array.prototype.slice.apply(arguments);
+				return core.dom.extend.apply(this, args);
+			},
 			append : function (element, content) {
 				return core.dom.append(element, content);
 			},

@@ -245,8 +245,6 @@ CORE.create_module('canvas-container', function(facade) {
                 minmax = facade.find_element('header .min-max', canvas),
                 content = facade.find_element('.content', canvas),
                 info = facade.find_element('.info', content);
-                width = facade.find_element('.width', info);
-                height = facade.find_element('.height', info);
                 element = {
                     container : container,
                     canvas : canvas,
@@ -254,9 +252,7 @@ CORE.create_module('canvas-container', function(facade) {
                     remove : remove,
                     minmax : minmax,
                     content :content,
-                    info : info,
-                    width : width,
-                    height : height
+                    info : info
                 }
             this.resize_canvas(element, {width : opt.css.width, height : opt.css.height});
             facade.prepend(element.container, element.canvas);
@@ -375,12 +371,19 @@ CORE.create_module('canvas-container', function(facade) {
             facade.draggable(element, {handle : 'header', cursor : 'crosshair' , containment : '.content'});
         }, 
         resize_canvas : function (element, opt) {
-            console.log('resize_canvas', opt);
-            facade.text(element.width, opt.width);
-            facade.attr(element.width, {value : opt.width});
-            facade.text(element.height, opt.height);
-            facade.attr(element.height, {value : opt.height});
+
+            var width = facade.find_element('.width', element.info),
+                height = facade.find_element('.height', element.info);
+            console.log('resize_canvas', {width : 500, height : 500}, opt);
+            opt = facade.extend({width : '500', height : '500'}, opt);
+            console.log('resize_canvas2', opt);
+            facade.text(width, opt.width);
+            facade.attr(width, {value : opt.width});
+            facade.text(height, opt.height);
+            facade.attr(height, {value : opt.height});
+            facade.css(element.content, {width : opt.width, height : opt.height});
             facade.css(element.header, {width : opt.width - 64});
+            console.log('resize_canvas', element.width, opt);
         },
         edit_info : function (element) {
             // console.log('edit_info', );
@@ -389,8 +392,8 @@ CORE.create_module('canvas-container', function(facade) {
             }
 
             var that = this,
-                width = facade.text(element.width),
-                height = facade.text(element.height),
+                width = facade.text(facade.find_element('.width', element.info)),
+                height = facade.text(facade.find_element('.height', element.info)),
                 form = facade.create_element('form', { 'class' : 'edit-info', children : [
                     facade.create_element('input', {'class' : 'width', value : width}),
                     facade.create_element('span', {text : '×'}),
@@ -398,10 +401,10 @@ CORE.create_module('canvas-container', function(facade) {
                 ]}),
                 ok =  facade.create_element('input', {type : 'button', 'class' : 'ok', value : 'ok'});
             
-            // span = facade.find_element('span', info);
-            facade.remove(element.width);
-            facade.remove(element.height);
-
+            span = facade.find_element('span', element.info);
+            facade.remove(span);
+            console.log('edit-info', width, height);
+            this.resize_canvas(element);  
             facade.append(element.info, facade.append(form, ok));
             facade.add_event(ok, 'click', function(e) {
                 that.update_info(element);
@@ -412,21 +415,20 @@ CORE.create_module('canvas-container', function(facade) {
             var form = facade.find_element('form', element.info),
                 width = facade.val(facade.find_element('.width', form)),
                 height = facade.val(facade.find_element('.height', form)),
-                el_width = facade.create_element('span', {'class' : 'width', text : width}),
+                el_width = facade.create_element('span', {'class' : 'width', text : width + ' '}),
                 el = facade.create_element('span', {text : '×'}),
-                el_height = facade.create_element('span', {'class' : 'height', text : height});
+                el_height = facade.create_element('span', {'class' : 'height', text : ' ' + height});
             
             facade.remove(form);
-            facade.css(element.canvas, {width : width, height : height});
-            facade.css(element.header, {width : width});
-            facade.append(element.info, el_width);
+            element.width = facade.append(element.info, el_width);
             facade.append(element.info, el);
-            facade.append(element.info, el_height);
+            element.height = facade.append(element.info, el_height);
+            this.resize_canvas(element);
         },
         toggleMinMax : function(element) {
-            this.resize_canvas(element, {width : facade.text(element.width), height : facade.text(element.height)});
+            this.resize_canvas(element);
             if (facade.has_class(element.canvas, 'min')){
-                facade.css(element.canvas, {'position' : 'absolute'});
+                facade.css(element.canvas, {'position' : 'absolute', 'float' : 'inherit'});
                 facade.css(element.content, {'display' : 'block'});
                 facade.css(element.header, {'width' : facade.text(element.width) - 64});
                 facade.remove_class(element.canvas, 'min');
