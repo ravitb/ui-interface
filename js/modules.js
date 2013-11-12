@@ -229,52 +229,39 @@ CORE.create_module('canvas-container', function(facade) {
             });
         },
         destroy : function () {
-            var remove;
+            var delete_btn;
             for (i = 0, l = sheets.data.length; i < l; i++) {
-                remove = facade.find('header .remove', sheet[i]);
-                facade.remove_event(remove, 'click', this.remove(sheet));
+                delete_btn = facade.find('header .remove', sheet[i]);
+                facade.remove_event(delete_btn, 'click', this.remove(sheet));
             }
             facade.ignore(['create_canvas']);
         },
         create : function (opt) {
             var that = this,
-                Element = function (opt){
-                    this.opt = opt;
-                    this.container; // = facade.find(),
-                    this.canvas; // = facade.template(this.container, opt),
-                    // element.prototype.header = facade.find_element('header', element.canvas);
-                    // element.prototype.remove = facade.find_element('header .remove', element.canvas);
-                    // element.prototype.minmax = facade.find_element('header .min-max', element.canvas);
-                    // element.prototype.content = facade.find_element('.content', element.canvas);
-                    // element.prototype.info = facade.find_element('.info', element.content);
-                    // element.prototype.width = facade.find_element('.width', element.info);
-                    // element.prototype.height = facade.find_element('.height', element.info);
-                    
-                };
-
-                Element.prototype = {
-                    setContainer : function () {
-                        this.container = facade.find();
-                    },
-                    getContainer : function () {
-                        return this.container;
-                    },
-                    setCanvas : function () {
-                        this.canvas = facade.template(this.getContainer(), this.opt);
-                    },
-                    getCanvas : function () {
-                        return this.canvas;
-                    }
-
+                container = facade.find(),
+                canvas = this.template(container, opt),
+                header = facade.find_element('header', canvas),
+                remove = facade.find_element('header .remove', canvas),
+                minmax = facade.find_element('header .min-max', canvas),
+                content = facade.find_element('.content', canvas),
+                info = facade.find_element('.info', content);
+                width = facade.find_element('.width', info);
+                height = facade.find_element('.height', info);
+                element = {
+                    container : container,
+                    canvas : canvas,
+                    header : header,
+                    remove : remove,
+                    minmax : minmax,
+                    content :content,
+                    info : info,
+                    width : width,
+                    height : height
                 }
-
-            element = new Element(opt);
-            console.log('create', element.setCanvas(), element.getCanvas(), element);
-
-                
             this.resize_canvas(element, {width : opt.css.width, height : opt.css.height});
             facade.prepend(element.container, element.canvas);
             this.reorder(element.canvas);
+            console.log('create',element);
 
             // console.log('z-index', facade.css(collection, 'z-index'));
             facade.add_event(element.remove, 'click', function(e) {
@@ -287,7 +274,7 @@ CORE.create_module('canvas-container', function(facade) {
 
             facade.add_event(element.content, 'click', function(e){
                 that.reorder(element.canvas);
-
+                console.log('no new element', (e.target === e.currentTarget), that.tool_data === {});
                 if (e.target === e.currentTarget && that.tool_data !== {}) {
                     position = facade.mouse_position(element.content, e);
                     if (!facade.is_empty_obj(that.tool_data)) {
@@ -320,15 +307,15 @@ CORE.create_module('canvas-container', function(facade) {
                     
                 },
                 resize : function (e, ui) {
-                    that.resize(element.canvas, ui.size);
+                    that.resize_canvas(element, ui.size);
                 },
                 stop : function (e, ui) {
 
                 }
             });
-            return element.canvas;
+            return canvas;
         },
-        template : function (element, opt) {
+        template : function (container, opt) {
             console.log('template', opt)
             var template =  facade.template('#canvas-template', {'title' : opt.name}),
                 canvas  = facade.append(facade.create_element('div', {'class' : 'canvas'}), template),
@@ -341,7 +328,6 @@ CORE.create_module('canvas-container', function(facade) {
                                  'z-index' : Math.min(layer*1 + this.z_index*1, 999)});
 
             facade.css(content, opt.css);
-            
             return canvas;
 
         },
@@ -389,15 +375,12 @@ CORE.create_module('canvas-container', function(facade) {
             facade.draggable(element, {handle : 'header', cursor : 'crosshair' , containment : '.content'});
         }, 
         resize_canvas : function (element, opt) {
-            console.log('resize_canvas', element);
+            console.log('resize_canvas', opt);
             facade.text(element.width, opt.width);
             facade.attr(element.width, {value : opt.width});
             facade.text(element.height, opt.height);
             facade.attr(element.height, {value : opt.height});
             facade.css(element.header, {width : opt.width - 64});
-            facade.css(element.content, {width : opt.width, height : opt.height});
-            console.log('resize_canvas', element);
-
         },
         edit_info : function (element) {
             // console.log('edit_info', );
@@ -413,12 +396,13 @@ CORE.create_module('canvas-container', function(facade) {
                     facade.create_element('span', {text : '×'}),
                     facade.create_element('input', {'class' : 'height', value : height})
                 ]}),
-                ok =  facade.create_element('input', {type : 'button', 'class' : 'ok', value : 'ok'}),
-                span = facade.find_element('span', element.info);
+                ok =  facade.create_element('input', {type : 'button', 'class' : 'ok', value : 'ok'});
+            
+            // span = facade.find_element('span', info);
+            facade.remove(element.width);
+            facade.remove(element.height);
 
-            facade.remove(span);
-
-            facade.append(info, facade.append(form, ok));
+            facade.append(element.info, facade.append(form, ok));
             facade.add_event(ok, 'click', function(e) {
                 that.update_info(element);
                 return false;
@@ -433,17 +417,18 @@ CORE.create_module('canvas-container', function(facade) {
                 el_height = facade.create_element('span', {'class' : 'height', text : height});
             
             facade.remove(form);
+            facade.css(element.canvas, {width : width, height : height});
+            facade.css(element.header, {width : width});
             facade.append(element.info, el_width);
             facade.append(element.info, el);
             facade.append(element.info, el_height);
-            this.resize_canvas(element, {width : width, height : height});
         },
         toggleMinMax : function(element) {
-            console.log('minmax', facade.has_class(element.canvas, 'min'));
+            this.resize_canvas(element, {width : facade.text(element.width), height : facade.text(element.height)});
             if (facade.has_class(element.canvas, 'min')){
-                facade.css(element.canvas, {'position' : 'absolute', 'float' : 'inherit'});
+                facade.css(element.canvas, {'position' : 'absolute'});
                 facade.css(element.content, {'display' : 'block'});
-                facade.css(element.header, {'width' : 'inherit'});
+                facade.css(element.header, {'width' : facade.text(element.width) - 64});
                 facade.remove_class(element.canvas, 'min');
             } else {
                 facade.css(element.canvas, {'position' : 'inherit', 'float' : 'left'});
