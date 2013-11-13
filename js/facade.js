@@ -40,7 +40,6 @@ var Facade = {
 				}
 			},
 			extend : function () {
-				console.log('Facade extend', arguments);
 				var args = Array.prototype.slice.apply(arguments);
 				return core.dom.extend.apply(this, args);
 			},

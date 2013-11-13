@@ -138,7 +138,6 @@ var CORE = (function ($, hb){
                     for (var i = 0, l = args.length; i < l; i++) {
                         opt = $.extend(args[i], opt);
                     }
-                    console.log('core extend', opt, args[0], args[1]);
                     return opt;
                 },
                 create : function (element) {
